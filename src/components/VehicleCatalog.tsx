@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Car, Zap, Shield, TrendingUp } from 'lucide-react'
+import { X, Shield, TrendingUp } from 'lucide-react'
 import { useSimulationStore } from '../store/useSimulationStore'
 import { formatCurrency } from '../lib/utils'
 import { cn } from '../lib/utils'
