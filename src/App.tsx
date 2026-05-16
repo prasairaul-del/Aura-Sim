@@ -4,6 +4,7 @@ import { FinancialLedger } from './features/finance/FinancialLedger'
 import { VirtualCOO } from './features/ai/VirtualCOO'
 import { PerformanceChart } from './components/PerformanceChart'
 import { AnalyticsDashboard } from './components/AnalyticsDashboard'
+import { CustomerProfiles } from './components/CustomerProfiles'
 import { OnboardingTutorial } from './components/OnboardingTutorial'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
@@ -70,6 +71,7 @@ function App() {
             <FinancialLedger />
           </div>
           <AnalyticsDashboard />
+          <CustomerProfiles />
         </div>
 
         <div className="col-span-12 lg:col-span-4 space-y-6" id="coo">

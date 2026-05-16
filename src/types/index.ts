@@ -25,4 +25,29 @@ export interface SimulationState {
   fleetHealth: number;
   operationalEfficiency: number;
   isSimulating: boolean;
+  customers: Customer[];
+  bookings: Booking[];
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  tier: "standard" | "gold" | "platinum";
+  totalBookings: number;
+  totalSpent: number;
+  createdAt: string;
+}
+
+export interface Booking {
+  id: string;
+  customerId: string;
+  vehicleId: string;
+  date: string; // ISO date string
+  startTime: string; // HH:MM format
+  endTime: string; // HH:MM format
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  amount: number;
+  notes?: string;
 }

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { SimulationState, Vehicle, Transaction } from '../types'
+import type { SimulationState, Vehicle, Transaction, Customer, Booking } from '../types'
 import {
   HEALTH_DECAY_MAX,
   REVENUE_MIN,
@@ -25,6 +25,14 @@ interface SimulationActions {
   toggleSimulation: () => void
   tick: () => void
   scheduleService: (id: string) => void
+  // Customer management
+  addCustomer: (customer: Omit<Customer, 'id' | 'totalBookings' | 'totalSpent' | 'createdAt'>) => void
+  updateCustomer: (id: string, updates: Partial<Customer>) => void
+  deleteCustomer: (id: string) => void
+  // Booking management
+  addBooking: (booking: Omit<Booking, 'id'>) => void
+  updateBookingStatus: (id: string, status: Booking['status']) => void
+  cancelBooking: (id: string) => void
 }
 
 export const useSimulationStore = create(persist<SimulationState & SimulationActions>((set, get) => ({
@@ -38,6 +46,16 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
   fleetHealth: 79,
   operationalEfficiency: 88,
   isSimulating: false,
+  customers: [
+    { id: '1', name: 'Alexander Rothschild', email: 'a.rothschild@luxury.com', phone: '+1-555-0101', tier: 'platinum', totalBookings: 24, totalSpent: 185000, createdAt: '2024-01-15' },
+    { id: '2', name: 'Victoria Chen', email: 'v.chen@elite.com', phone: '+1-555-0102', tier: 'gold', totalBookings: 12, totalSpent: 78000, createdAt: '2024-02-20' },
+    { id: '3', name: 'James Morrison', email: 'j.morrison@premium.com', phone: '+1-555-0103', tier: 'standard', totalBookings: 5, totalSpent: 22000, createdAt: '2024-03-10' },
+  ],
+  bookings: [
+    { id: '1', customerId: '1', vehicleId: '1', date: '2024-05-20', startTime: '09:00', endTime: '17:00', status: 'confirmed', amount: 2500, notes: 'Airport transfer - VIP service' },
+    { id: '2', customerId: '2', vehicleId: '2', date: '2024-05-21', startTime: '14:00', endTime: '18:00', status: 'pending', amount: 1800 },
+    { id: '3', customerId: '1', vehicleId: '3', date: '2024-05-22', startTime: '10:00', endTime: '16:00', status: 'completed', amount: 3200, notes: 'Wedding ceremony transport' },
+  ],
 
   addVehicle: (vehicle) => set((state) => ({
     fleet: [...state.fleet, { ...vehicle, id: Math.random().toString(36).substring(2, 9), totalServiceHours: 0 }]
@@ -121,6 +139,67 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
           : v
       ),
       totalBalance: state.totalBalance - maintenanceCost
+    }
+  }),
+
+  // Customer management actions
+  addCustomer: (customer) => set((state) => ({
+    customers: [...state.customers, {
+      ...customer,
+      id: Math.random().toString(36).substring(2, 9),
+      totalBookings: 0,
+      totalSpent: 0,
+      createdAt: new Date().toISOString().split('T')[0]
+    }]
+  })),
+
+  updateCustomer: (id, updates) => set((state) => ({
+    customers: state.customers.map(c => c.id === id ? { ...c, ...updates } : c)
+  })),
+
+  deleteCustomer: (id) => set((state) => ({
+    customers: state.customers.filter(c => c.id !== id),
+    bookings: state.bookings.filter(b => b.customerId !== id)
+  })),
+
+  // Booking management actions
+  addBooking: (booking) => set((state) => {
+    const newBooking = {
+      ...booking,
+      id: Math.random().toString(36).substring(2, 9)
+    }
+    // Update customer stats
+    const updatedCustomers = state.customers.map(c =>
+      c.id === booking.customerId
+        ? { ...c, totalBookings: c.totalBookings + 1, totalSpent: c.totalSpent + booking.amount }
+        : c
+    )
+    return {
+      bookings: [newBooking, ...state.bookings],
+      customers: updatedCustomers,
+      totalBalance: state.totalBalance + booking.amount
+    }
+  }),
+
+  updateBookingStatus: (id, status) => set((state) => ({
+    bookings: state.bookings.map(b => b.id === id ? { ...b, status } : b)
+  })),
+
+  cancelBooking: (id) => set((state) => {
+    const booking = state.bookings.find(b => b.id === id)
+    if (!booking) return state
+    
+    // Refund the amount and update customer stats
+    const updatedCustomers = state.customers.map(c =>
+      c.id === booking.customerId
+        ? { ...c, totalSpent: c.totalSpent - booking.amount }
+        : c
+    )
+    
+    return {
+      bookings: state.bookings.filter(b => b.id !== id),
+      customers: updatedCustomers,
+      totalBalance: state.totalBalance - booking.amount
     }
   }),
 
