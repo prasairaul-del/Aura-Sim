@@ -28,6 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     { href: '#ledger', label: 'LEDGER' },
     { href: '#analytics', label: 'ANALYTICS' },
     { href: '#customers', label: 'CUSTOMERS' },
+    { href: '#budget', label: 'BUDGET' },
     { href: '#coo', label: 'VIRTUAL COO' },
   ]
 
