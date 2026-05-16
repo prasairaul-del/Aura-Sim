@@ -28,10 +28,11 @@ export const FleetModule: React.FC = () => {
         <div className="flex gap-2">
           <CSVImport />
           <button
-            className="px-4 py-2 bg-emerald-500 text-onyx-950 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            onClick={() => setIsCatalogOpen(true)}
+            className="px-4 py-2 bg-emerald-500 text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50 hover:bg-emerald-600 transition-colors"
             style={{ borderRadius: '6px' }}
           >
-            ACQUIRE NEW ASSET
+            Acquire new asset
           </button>
         </div>
       </div>
