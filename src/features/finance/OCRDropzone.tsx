@@ -2,36 +2,98 @@ import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, CheckCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Tesseract from 'tesseract.js';
 
 interface OCRDropzoneProps {
-  onAnalysisComplete: (result: string) => void;
+  onAnalysisComplete?: (result: string) => void;
 }
 
 export const OCRDropzone: React.FC<OCRDropzoneProps> = ({ onAnalysisComplete }) => {
   const [isUploading, setUploading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
     
     setUploading(true);
     
-    const reader = new FileReader();
-    reader.onload = async () => {
-      // Simulate OCR with Gemini or a mock
+    try {
+      // Perform OCR using Tesseract.js
+      const result = await Tesseract.recognize(
+        file,
+        'eng',
+        { 
+          logger: (m) => console.log('OCR Progress:', m),
+        }
+      );
+
+      const extractedText = result.data.text;
+      
+      // Parse the extracted text to find financial information
+      const parsedData = parseReceiptData(extractedText);
+      
+      if (onAnalysisComplete) {
+        onAnalysisComplete(parsedData);
+      }
+      
+      setUploading(false);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      console.error('OCR Error:', error);
+      setUploading(false);
+      
+      // Fallback to mock data on error
       const mockResult = `Analyzing luxury receipt...
 Total: $4,200.50
 Vendor: Elite Fleet Services
 Category: Maintenance`;
       
-      onAnalysisComplete(mockResult);
-      setUploading(false);
+      if (onAnalysisComplete) {
+        onAnalysisComplete(mockResult);
+      }
+      
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    };
-    reader.readAsDataURL(file);
+    }
   }, [onAnalysisComplete]);
+
+  // Helper function to parse receipt data
+  const parseReceiptData = (text: string): string => {
+    const lines = text.split('\n').filter(line => line.trim());
+    
+    // Try to extract total amount
+    const totalMatch = text.match(/(?:total|amount|sum)[\s:$]*([\d,]+\.?\d*)/i);
+    const total = totalMatch ? `$${totalMatch[1]}` : 'Not found';
+    
+    // Try to extract vendor name (usually first few lines or after common patterns)
+    const vendorLine = lines.find(line => 
+      !line.match(/^\d/) && 
+      !line.match(/\d{2}[:\/]\d{2}/) && 
+      line.length > 3 && 
+      line.length < 50
+    ) || 'Unknown Vendor';
+    
+    // Try to detect category from keywords
+    const lowerText = text.toLowerCase();
+    let category = 'Operations';
+    if (lowerText.includes('fuel') || lowerText.includes('gas') || lowerText.includes('petrol')) {
+      category = 'Fleet';
+    } else if (lowerText.includes('maintenance') || lowerText.includes('repair') || lowerText.includes('service')) {
+      category = 'Maintenance';
+    } else if (lowerText.includes('food') || lowerText.includes('restaurant') || lowerText.includes('dining')) {
+      category = 'VIP Services';
+    }
+    
+    return `OCR Analysis Complete:
+Vendor: ${vendorLine.trim()}
+Total: ${total}
+Category: ${category}
+
+Full Text:
+${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`;
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

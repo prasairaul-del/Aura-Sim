@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
 import { GlassCard, StatusBadge } from '../../components/ui/GlassComponents'
-import { Car, Battery, DollarSign, Activity } from 'lucide-react'
-import { formatCurrency } from '../../lib/utils'
+import { Car, DollarSign, Activity } from 'lucide-react'
+import { formatCurrency, cn } from '../../lib/utils'
 import { motion } from 'framer-motion'
 
 export const FleetModule: React.FC = () => {
@@ -21,7 +21,7 @@ export const FleetModule: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fleet.map((vehicle, index) => (
+        {fleet.map((vehicle) => (
           <GlassCard key={vehicle.id} glowColor={vehicle.health < 50 ? 'gold' : 'emerald'}>
             <div className="flex justify-between items-start mb-6">
               <div className="p-3 bg-white/5 rounded-xl border border-white/10">

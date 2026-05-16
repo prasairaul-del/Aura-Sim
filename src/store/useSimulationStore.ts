@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { SimulationState, Vehicle, Transaction } from '../types'
+import type { SimulationState, Vehicle, Transaction } from '../types'
 
 interface SimulationActions {
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void

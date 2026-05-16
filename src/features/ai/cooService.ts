@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-export const getVirtualCOOBrief = async (data: any) => {
+export const generateCOOReport = async (data: any) => {
   if (!API_KEY) {
     console.warn("VITE_GEMINI_API_KEY is not set. Using mock insights.");
     await new Promise(resolve => setTimeout(resolve, 2000));

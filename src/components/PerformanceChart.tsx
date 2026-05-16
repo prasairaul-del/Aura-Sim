@@ -1,18 +1,57 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { GlassCard } from '../ui/GlassComponents'
+import { GlassCard } from './ui/GlassComponents'
+import { useSimulationStore } from '../store/useSimulationStore'
 
-const data = [
-  { name: '00:00', value: 4000 },
-  { name: '04:00', value: 3000 },
-  { name: '08:00', value: 2000 },
-  { name: '12:00', value: 2780 },
-  { name: '16:00', value: 1890 },
-  { name: '20:00', value: 2390 },
-  { name: '23:59', value: 3490 },
-];
+interface ChartDataPoint {
+  name: string;
+  value: number;
+}
 
 export const PerformanceChart: React.FC = () => {
+  const { transactions, totalBalance } = useSimulationStore()
+  const [data, setData] = useState<ChartDataPoint[]>([])
+
+  // Generate chart data from transaction history
+  useEffect(() => {
+    if (transactions.length === 0) {
+      // Show initial balance as baseline
+      setData([{ name: 'Start', value: Math.round(totalBalance / 1000) }])
+      return
+    }
+
+    // Create a running balance chart from transactions
+    const sortedTransactions = [...transactions].reverse()
+    let runningBalance = totalBalance
+    
+    const chartPoints: ChartDataPoint[] = sortedTransactions.map((t) => {
+      const date = new Date(t.date)
+      const timeLabel = date.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      })
+      
+      // Calculate running balance at this point
+      const adjustment = t.type === 'income' ? -t.amount : t.amount
+      runningBalance += adjustment
+      
+      return {
+        name: timeLabel,
+        value: Math.round(runningBalance / 1000)
+      }
+    })
+
+    // Add current state as last point
+    chartPoints.push({
+      name: 'Now',
+      value: Math.round(totalBalance / 1000)
+    })
+
+    // Keep only last 24 data points for readability
+    setData(chartPoints.slice(-24))
+  }, [transactions, totalBalance])
+
   return (
     <GlassCard className="h-[300px] p-0 overflow-hidden">
       <div className="p-6 pb-0">
@@ -50,6 +89,7 @@ export const PerformanceChart: React.FC = () => {
                 fontSize: '12px'
               }}
               itemStyle={{ color: '#10b981' }}
+              formatter={(value) => [`$${value}k`, 'Balance']}
             />
             <Area 
               type="monotone" 
