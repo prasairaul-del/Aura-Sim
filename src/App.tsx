@@ -6,6 +6,7 @@ import { PerformanceChart } from './components/PerformanceChart'
 import { AnalyticsDashboard } from './components/AnalyticsDashboard'
 import { CustomerProfiles } from './components/CustomerProfiles'
 import { BudgetPlanning } from './components/BudgetPlanning'
+import { StaffManagement } from './components/StaffManagement'
 import { OnboardingTutorial } from './components/OnboardingTutorial'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
@@ -74,6 +75,7 @@ function App() {
           <AnalyticsDashboard />
           <CustomerProfiles />
           <BudgetPlanning />
+          <StaffManagement />
         </div>
 
         <div className="col-span-12 lg:col-span-4 space-y-6" id="coo">
