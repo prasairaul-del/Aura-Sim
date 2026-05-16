@@ -8,6 +8,46 @@ interface OCRDropzoneProps {
   onAnalysisComplete?: (result: string) => void;
 }
 
+// Helper function to parse receipt data - moved before component to avoid hoisting issues
+const parseReceiptData = (text: string): string => {
+  const lines = text.split('\n').filter(line => line.trim());
+  
+  // Try to extract total amount
+  const totalMatch = text.match(/(?:total|amount|sum)[\s:$]*([\d,]+\.?\d*)/i);
+  const total = totalMatch ? `$${totalMatch[1]}` : 'Not found';
+  
+  // Try to extract vendor name (usually first few lines or after common patterns)
+  const vendorLine = lines.find(line => 
+    !line.match(/^\d/) && 
+    !line.match(/\d{2}[:/]\d{2}/) && 
+    line.length > 3 && 
+    line.length < 50
+  ) || 'Unknown Vendor';
+  
+  // Try to detect category from keywords
+  const lowerText = text.toLowerCase();
+  let category = 'Operations';
+  if (lowerText.includes('fuel') || lowerText.includes('gas') || lowerText.includes('petrol')) {
+    category = 'Fleet';
+  } else if (lowerText.includes('maintenance') || lowerText.includes('repair') || lowerText.includes('service')) {
+    category = 'Operations'; // Mapped to Operations since Maintenance isn't a valid category
+  } else if (lowerText.includes('food') || lowerText.includes('restaurant') || lowerText.includes('dining')) {
+    category = 'VIP Services';
+  } else if (lowerText.includes('marketing') || lowerText.includes('advertising')) {
+    category = 'Marketing';
+  } else if (lowerText.includes('staff') || lowerText.includes('salary') || lowerText.includes('payroll')) {
+    category = 'Staff';
+  }
+  
+  return `OCR Analysis Complete:
+Vendor: ${vendorLine.trim()}
+Total: ${total}
+Category: ${category}
+
+Full Text:
+${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`;
+};
+
 export const OCRDropzone: React.FC<OCRDropzoneProps> = ({ onAnalysisComplete }) => {
   const [isUploading, setUploading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
@@ -58,46 +98,6 @@ Category: Maintenance`;
       setTimeout(() => setSuccess(false), 3000);
     }
   }, [onAnalysisComplete]);
-
-  // Helper function to parse receipt data
-  const parseReceiptData = (text: string): string => {
-    const lines = text.split('\n').filter(line => line.trim());
-    
-    // Try to extract total amount
-    const totalMatch = text.match(/(?:total|amount|sum)[\s:$]*([\d,]+\.?\d*)/i);
-    const total = totalMatch ? `$${totalMatch[1]}` : 'Not found';
-    
-    // Try to extract vendor name (usually first few lines or after common patterns)
-    const vendorLine = lines.find(line => 
-      !line.match(/^\d/) && 
-      !line.match(/\d{2}[:\/]\d{2}/) && 
-      line.length > 3 && 
-      line.length < 50
-    ) || 'Unknown Vendor';
-    
-    // Try to detect category from keywords
-    const lowerText = text.toLowerCase();
-    let category = 'Operations';
-    if (lowerText.includes('fuel') || lowerText.includes('gas') || lowerText.includes('petrol')) {
-      category = 'Fleet';
-    } else if (lowerText.includes('maintenance') || lowerText.includes('repair') || lowerText.includes('service')) {
-      category = 'Operations'; // Mapped to Operations since Maintenance isn't a valid category
-    } else if (lowerText.includes('food') || lowerText.includes('restaurant') || lowerText.includes('dining')) {
-      category = 'VIP Services';
-    } else if (lowerText.includes('marketing') || lowerText.includes('advertising')) {
-      category = 'Marketing';
-    } else if (lowerText.includes('staff') || lowerText.includes('salary') || lowerText.includes('payroll')) {
-      category = 'Staff';
-    }
-    
-    return `OCR Analysis Complete:
-Vendor: ${vendorLine.trim()}
-Total: ${total}
-Category: ${category}
-
-Full Text:
-${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`;
-  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

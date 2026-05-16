@@ -50,6 +50,7 @@ describe('formatCurrency', () => {
   })
 
   it('falls back to USD for unknown currency codes', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(formatCurrency(100, 'INVALID' as any)).toBe('$100.00')
   })
 
