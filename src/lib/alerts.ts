@@ -62,7 +62,7 @@ export function checkSimulationAlerts(
   for (const vehicle of fleet) {
     if (vehicle.health <= CRITICAL_HEALTH_THRESHOLD && vehicle.health > 0) {
       const existing = existingAlerts.find(a =>
-        a.message.includes(vehicle.model) && a.message.includes('critical')
+        a.message.includes(vehicle.model) && a.message.toLowerCase().includes('critical')
       )
       if (!existing) {
         newAlerts.push({
@@ -72,7 +72,7 @@ export function checkSimulationAlerts(
       }
     } else if (vehicle.health <= LOW_HEALTH_THRESHOLD && vehicle.health > CRITICAL_HEALTH_THRESHOLD) {
       const existing = existingAlerts.find(a =>
-        a.message.includes(vehicle.model) && a.message.includes('low')
+        a.message.includes(vehicle.model) && a.message.toLowerCase().includes('low')
       )
       if (!existing) {
         newAlerts.push({
@@ -85,7 +85,7 @@ export function checkSimulationAlerts(
 
   // Check for negative balance
   if (totalBalance < NEGATIVE_BALANCE_THRESHOLD) {
-    const existing = existingAlerts.find(a => a.message.includes('negative balance'))
+    const existing = existingAlerts.find(a => a.message.toLowerCase().includes('balance is negative'))
     if (!existing) {
       newAlerts.push({
         type: 'critical',
@@ -96,7 +96,7 @@ export function checkSimulationAlerts(
 
   // Check for very low balance (10% of initial)
   if (totalBalance < 125000 && totalBalance >= NEGATIVE_BALANCE_THRESHOLD) {
-    const existing = existingAlerts.find(a => a.message.includes('low balance'))
+    const existing = existingAlerts.find(a => a.message.toLowerCase().includes('low balance'))
     if (!existing) {
       newAlerts.push({
         type: 'warning',

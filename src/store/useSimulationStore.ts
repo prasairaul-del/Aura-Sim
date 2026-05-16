@@ -40,6 +40,17 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
     fleet: [...state.fleet, { ...vehicle, id: Math.random().toString(36).substring(2, 9), totalServiceHours: 0 }]
   })),
 
+  removeVehicle: (id) => set((state) => {
+    const vehicle = state.fleet.find(v => v.id === id)
+    if (!vehicle) return state
+    // Refund partial value (50% of revenue generated as resale value)
+    const resaleValue = vehicle.revenueGenerated * 0.5
+    return {
+      fleet: state.fleet.filter(v => v.id !== id),
+      totalBalance: state.totalBalance + resaleValue
+    }
+  }),
+
   updateVehicleHealth: (id, health) => set((state) => ({
     fleet: state.fleet.map(v => v.id === id ? { ...v, health: Math.max(0, Math.min(100, health)) } : v)
   })),
@@ -53,6 +64,34 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
     const balanceChange = transaction.type === 'income' ? transaction.amount : -transaction.amount
     return {
       transactions: [newTransaction, ...state.transactions].slice(0, MAX_TRANSACTIONS),
+      totalBalance: state.totalBalance + balanceChange
+    }
+  }),
+
+  editTransaction: (id, updates) => set((state) => {
+    const transaction = state.transactions.find(t => t.id === id)
+    if (!transaction) return state
+    
+    const oldBalanceChange = transaction.type === 'income' ? transaction.amount : -transaction.amount
+    const newAmount = updates.amount ?? transaction.amount
+    const newType = updates.type ?? transaction.type
+    const newBalanceChange = newType === 'income' ? newAmount : -newAmount
+    
+    const updatedTransaction = { ...transaction, ...updates }
+    
+    return {
+      transactions: state.transactions.map(t => t.id === id ? updatedTransaction : t),
+      totalBalance: state.totalBalance - oldBalanceChange + newBalanceChange
+    }
+  }),
+
+  deleteTransaction: (id) => set((state) => {
+    const transaction = state.transactions.find(t => t.id === id)
+    if (!transaction) return state
+    
+    const balanceChange = transaction.type === 'income' ? -transaction.amount : transaction.amount
+    return {
+      transactions: state.transactions.filter(t => t.id !== id),
       totalBalance: state.totalBalance + balanceChange
     }
   }),

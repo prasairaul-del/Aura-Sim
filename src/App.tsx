@@ -27,7 +27,7 @@ function App() {
         {/* Top KPI Bar */}
         <div className="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="dashboard">
           {[
-            { label: 'Total Liquidity', value: formatCurrency(totalBalance, currency), icon: TrendingUp, color: 'text-gold-500' },
+            { label: 'Total Liquidity', value: formatCurrencyFromUSD(totalBalance, currency), icon: TrendingUp, color: 'text-gold-500' },
             { label: 'Fleet Viability', value: `${fleetHealth}%`, icon: ShieldCheck, color: 'text-emerald-500' },
             { label: 'Op. Efficiency', value: `${operationalEfficiency}%`, icon: Zap, color: 'text-emerald-400' }
           ].map((kpi, i) => (

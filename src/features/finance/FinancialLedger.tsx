@@ -207,19 +207,108 @@ export const FinancialLedger: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-colors group"
+                    className={cn(
+                      "p-4 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-colors group",
+                      editingId === t.id && "border-emerald-500/30 bg-emerald-500/5"
+                    )}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={cn(
-                        "p-2 rounded-lg",
-                        t.type === 'income' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
-                      )} aria-label={t.type === 'income' ? 'Income' : 'Expense'}>
-                        {t.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                    {editingId === t.id ? (
+                      // Edit mode
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={editForm.merchant}
+                          onChange={(e) => setEditForm({ ...editForm, merchant: e.target.value })}
+                          className="w-full bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                          placeholder="Merchant"
+                        />
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={editForm.amount}
+                            onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
+                            className="flex-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                            placeholder="Amount"
+                          />
+                          <select
+                            value={editForm.type}
+                            onChange={(e) => setEditForm({ ...editForm, type: e.target.value as TransactionType })}
+                            className="bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                          >
+                            <option value="income" className="bg-onyx-900">Income</option>
+                            <option value="expense" className="bg-onyx-900">Expense</option>
+                          </select>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => saveEdit(t.id)}
+                            className="px-3 py-1 bg-emerald-500 text-onyx-950 rounded text-xs font-bold hover:bg-emerald-400 focus:outline-none"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="px-3 py-1 bg-white/10 text-white/60 rounded text-xs hover:bg-white/20 focus:outline-none"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-white/80">{t.merchant}</p>
-                        <p className="text-[10px] text-white/50 uppercase tracking-widest">{t.category} &bull; {new Date(t.date).toLocaleTimeString()}</p>
+                    ) : (
+                      // View mode
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={cn(
+                            "p-2 rounded-lg",
+                            t.type === 'income' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                          )} aria-label={t.type === 'income' ? 'Income' : 'Expense'}>
+                            {t.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-white/80">{t.merchant}</p>
+                            <p className="text-[10px] text-white/50 uppercase tracking-widest">{t.category} &bull; {new Date(t.date).toLocaleTimeString()}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className={cn(
+                              "font-mono text-sm font-bold",
+                              t.type === 'income' ? "text-emerald-400" : "text-red-400"
+                            )} aria-label={`${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}`}>
+                              {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+                            </p>
+                            <p className="text-[8px] text-white/25 uppercase tracking-tighter">Verified</p>
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => startEdit(t)}
+                              className="p-1.5 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                              aria-label={`Edit transaction for ${t.merchant}`}
+                            >
+                              <Edit className="w-3 h-3 text-white/40 hover:text-white/70" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(t.id)}
+                              className="p-1.5 hover:bg-red-500/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                              aria-label={`Delete transaction for ${t.merchant}`}
+                            >
+                              <Trash2 className="w-3 h-3 text-white/40 hover:text-red-400" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
+                    )}
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  )
+}
                     </div>
                     <div className="text-right">
                       <p className={cn(
@@ -234,6 +323,12 @@ export const FinancialLedger: React.FC = () => {
                 ))
               )}
             </AnimatePresence>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  )
+}
           </div>
         </GlassCard>
       </div>

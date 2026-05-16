@@ -84,8 +84,36 @@ export const FleetModule: React.FC = () => {
                   Schedule Service
                 </button>
               )}
+
+              <button
+                onClick={() => handleSellVehicle(vehicle)}
+                className="w-full mt-2 py-2 bg-red-500/5 border border-red-500/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-red-400/50 hover:bg-red-500/10 hover:text-red-400/70 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                aria-label={`Sell ${vehicle.model}`}
+              >
+                <Trash2 className="w-3 h-3" />
+                Sell Vehicle
+              </button>
             </div>
           </GlassCard>
+        ))}
+      </div>
+
+      <VehicleCatalog isOpen={isCatalogOpen} onClose={() => setIsCatalogOpen(false)} />
+    </div>
+  )
+}
+                  Schedule Service
+                </button>
+              )}
+            </div>
+          </GlassCard>
+        ))}
+      </div>
+    </div>
+  )
+}
+  )
+}
         ))}
       </div>
     </div>
