@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { SimpleCard } from './ui/GlassComponents'
 import { Layers, Plus, Trash2, Check } from 'lucide-react'
+import { useSimulationStore } from '../store/useSimulationStore'
 
 interface SimulationProfile {
   id: string
@@ -12,10 +13,14 @@ interface SimulationProfile {
 }
 
 export const ScenarioManager: React.FC = () => {
+  const { resetSimulation } = useSimulationStore()
   const [profiles, setProfiles] = useState<SimulationProfile[]>(() => {
     const saved = localStorage.getItem('aura-simulation-profiles')
     return saved ? JSON.parse(saved) : [
-      { id: 'default', name: 'Default scenario', description: 'Standard luxury fleet simulation', createdAt: new Date().toISOString(), fleetSize: 3, initialBalance: 1250000 },
+      { id: 'default', name: 'Standard Fleet', description: 'Balanced luxury fleet simulation', createdAt: new Date().toISOString(), fleetSize: 3, initialBalance: 1250000 },
+      { id: 'aggressive-growth', name: 'Aggressive Growth', description: 'Growth phase with 20 limo fleet', createdAt: new Date().toISOString(), fleetSize: 20, initialBalance: 3000000 },
+      { id: 'conservative', name: 'Conservative Start', description: 'Small fleet, high cash reserves', createdAt: new Date().toISOString(), fleetSize: 2, initialBalance: 2000000 },
+      { id: 'mega-fleet', name: 'Mega Fleet', description: 'Large scale operation with 50 vehicles', createdAt: new Date().toISOString(), fleetSize: 50, initialBalance: 8000000 },
     ]
   })
   const [activeProfileId, setActiveProfileId] = useState<string>(() => {
@@ -50,10 +55,14 @@ export const ScenarioManager: React.FC = () => {
   }
 
   const handleSwitchProfile = (id: string) => {
+    const profile = profiles.find(p => p.id === id)
+    if (!profile) return
+    
     setActiveProfileId(id)
     localStorage.setItem('aura-active-profile', id)
-    // Trigger a custom event for other components to react
-    window.dispatchEvent(new CustomEvent('profile-switched', { detail: id }))
+    
+    // Reset simulation with new scenario parameters
+    resetSimulation(profile.fleetSize, profile.initialBalance)
   }
 
   const activeProfile = profiles.find(p => p.id === activeProfileId)

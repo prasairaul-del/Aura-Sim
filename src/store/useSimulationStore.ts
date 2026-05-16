@@ -15,6 +15,52 @@ import {
   MAX_TRANSACTIONS,
 } from '../lib/simConfig'
 
+// Helper to get initial fleet based on active scenario
+const getInitialFleet = (fleetSize: number): Vehicle[] => {
+  const luxuryModels = [
+    'Rolls-Royce Ghost', 'Bentley Flying Spur', 'Maybach S-Class',
+    'Mercedes-Maybach GLS', 'BMW 7 Series', 'Audi A8 L',
+    'Porsche Panamera', 'Tesla Model S Plaid', 'Range Rover Autobiography',
+    'Aston Martin DBX', 'Lamborghini Urus', 'Ferrari Purosangue',
+    'Maserati Quattroporte', 'Genesis G90', 'Lincoln Navigator',
+    'Cadillac Escalade', 'Infiniti QX80', 'Lexus LS 500',
+    'Jaguar XJ', 'McLaren Artura'
+  ]
+  
+  return Array.from({ length: fleetSize }, (_, i) => ({
+    id: `vehicle-${i + 1}`,
+    model: luxuryModels[i % luxuryModels.length],
+    status: 'available' as const,
+    health: 100,
+    lastService: new Date().toISOString().split('T')[0],
+    revenueGenerated: 0,
+    totalServiceHours: 0,
+    maintenanceCosts: 0,
+  }))
+}
+
+// Get active scenario profile
+const getActiveScenario = () => {
+  try {
+    const activeId = localStorage.getItem('aura-active-profile') || 'default'
+    const profiles = JSON.parse(localStorage.getItem('aura-simulation-profiles') || '[]')
+    const profile = profiles.find((p: any) => p.id === activeId)
+    
+    if (profile) {
+      return {
+        fleetSize: profile.fleetSize || 3,
+        initialBalance: profile.initialBalance || 1250000,
+      }
+    }
+  } catch (e) {
+    // Fallback to default
+  }
+  
+  return { fleetSize: 3, initialBalance: 1250000 }
+}
+
+const scenario = getActiveScenario()
+
 interface SimulationActions {
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void
   removeVehicle: (id: string) => void
@@ -25,6 +71,7 @@ interface SimulationActions {
   toggleSimulation: () => void
   tick: () => void
   scheduleService: (id: string) => void
+  resetSimulation: (fleetSize: number, initialBalance: number) => void
   // Customer management
   addCustomer: (customer: Omit<Customer, 'id' | 'totalBookings' | 'totalSpent' | 'createdAt'>) => void
   updateCustomer: (id: string, updates: Partial<Customer>) => void
@@ -36,15 +83,11 @@ interface SimulationActions {
 }
 
 export const useSimulationStore = create(persist<SimulationState & SimulationActions>((set, get) => ({
-  fleet: [
-    { id: '1', model: 'Rolls-Royce Ghost', status: 'available', health: 100, lastService: '2024-05-01', revenueGenerated: 50000, totalServiceHours: 0, maintenanceCosts: 0 },
-    { id: '2', model: 'Bentley Flying Spur', status: 'in-service', health: 92, lastService: '2024-04-15', revenueGenerated: 35000, totalServiceHours: 120, maintenanceCosts: 2500 },
-    { id: '3', model: 'Maybach S-Class', status: 'maintenance', health: 45, lastService: '2024-03-20', revenueGenerated: 12000, totalServiceHours: 45, maintenanceCosts: 8000 },
-  ],
+  fleet: getInitialFleet(scenario.fleetSize),
   transactions: [],
-  totalBalance: 1250000,
-  fleetHealth: 79,
-  operationalEfficiency: 88,
+  totalBalance: scenario.initialBalance,
+  fleetHealth: 100,
+  operationalEfficiency: 100,
   isSimulating: false,
   customers: [
     { id: '1', name: 'Alexander Rothschild', email: 'a.rothschild@luxury.com', phone: '+1-555-0101', tier: 'platinum', totalBookings: 24, totalSpent: 185000, createdAt: '2024-01-15' },
@@ -202,6 +245,25 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
       totalBalance: state.totalBalance - booking.amount
     }
   }),
+
+  resetSimulation: (fleetSize, initialBalance) => set(() => ({
+    fleet: getInitialFleet(fleetSize),
+    transactions: [],
+    totalBalance: initialBalance,
+    fleetHealth: 100,
+    operationalEfficiency: 100,
+    isSimulating: false,
+    customers: [
+      { id: '1', name: 'Alexander Rothschild', email: 'a.rothschild@luxury.com', phone: '+1-555-0101', tier: 'platinum', totalBookings: 24, totalSpent: 185000, createdAt: '2024-01-15' },
+      { id: '2', name: 'Victoria Chen', email: 'v.chen@elite.com', phone: '+1-555-0102', tier: 'gold', totalBookings: 12, totalSpent: 78000, createdAt: '2024-02-20' },
+      { id: '3', name: 'James Morrison', email: 'j.morrison@premium.com', phone: '+1-555-0103', tier: 'standard', totalBookings: 5, totalSpent: 22000, createdAt: '2024-03-10' },
+    ],
+    bookings: [
+      { id: '1', customerId: '1', vehicleId: '1', date: '2024-05-20', startTime: '09:00', endTime: '17:00', status: 'confirmed', amount: 2500, notes: 'Airport transfer - VIP service' },
+      { id: '2', customerId: '2', vehicleId: '2', date: '2024-05-21', startTime: '14:00', endTime: '18:00', status: 'pending', amount: 1800 },
+      { id: '3', customerId: '1', vehicleId: '3', date: '2024-05-22', startTime: '10:00', endTime: '16:00', status: 'completed', amount: 3200, notes: 'Wedding ceremony transport' },
+    ],
+  })),
 
   tick: () => {
     const state = get()
