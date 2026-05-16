@@ -16,7 +16,24 @@ import {
 } from '../lib/simConfig'
 
 // Helper to get initial fleet based on active scenario
-const getInitialFleet = (fleetSize: number): Vehicle[] => {
+const getInitialFleet = (fleetSize: number, customVehicles?: any[]): Vehicle[] => {
+  // If custom vehicles are provided, use them
+  if (customVehicles && customVehicles.length > 0) {
+    return customVehicles.map((v, i) => ({
+      id: `custom-vehicle-${i + 1}`,
+      model: v.model,
+      status: (v.status || 'available') as Vehicle['status'],
+      health: v.health || 100,
+      lastService: v.purchaseDate || new Date().toISOString().split('T')[0],
+      revenueGenerated: 0,
+      totalServiceHours: 0,
+      maintenanceCosts: 0,
+      purchaseDate: v.purchaseDate,
+      currentValuation: v.currentValuation,
+    }))
+  }
+  
+  // Otherwise auto-generate fleet
   const luxuryModels = [
     'Rolls-Royce Ghost', 'Bentley Flying Spur', 'Maybach S-Class',
     'Mercedes-Maybach GLS', 'BMW 7 Series', 'Audi A8 L',
@@ -50,13 +67,14 @@ const getActiveScenario = () => {
       return {
         fleetSize: profile.fleetSize || 3,
         initialBalance: profile.initialBalance || 1250000,
+        customVehicles: profile.customVehicles,
       }
     }
   } catch (e) {
     // Fallback to default
   }
   
-  return { fleetSize: 3, initialBalance: 1250000 }
+  return { fleetSize: 3, initialBalance: 1250000, customVehicles: undefined }
 }
 
 const scenario = getActiveScenario()
@@ -71,7 +89,7 @@ interface SimulationActions {
   toggleSimulation: () => void
   tick: () => void
   scheduleService: (id: string) => void
-  resetSimulation: (fleetSize: number, initialBalance: number) => void
+  resetSimulation: (fleetSize: number, initialBalance: number, customVehicles?: any[]) => void
   // Customer management
   addCustomer: (customer: Omit<Customer, 'id' | 'totalBookings' | 'totalSpent' | 'createdAt'>) => void
   updateCustomer: (id: string, updates: Partial<Customer>) => void
@@ -83,7 +101,7 @@ interface SimulationActions {
 }
 
 export const useSimulationStore = create(persist<SimulationState & SimulationActions>((set, get) => ({
-  fleet: getInitialFleet(scenario.fleetSize),
+  fleet: getInitialFleet(scenario.fleetSize, scenario.customVehicles),
   transactions: [],
   totalBalance: scenario.initialBalance,
   fleetHealth: 100,
@@ -246,8 +264,8 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
     }
   }),
 
-  resetSimulation: (fleetSize, initialBalance) => set(() => ({
-    fleet: getInitialFleet(fleetSize),
+  resetSimulation: (fleetSize, initialBalance, customVehicles?) => set(() => ({
+    fleet: getInitialFleet(fleetSize, customVehicles),
     transactions: [],
     totalBalance: initialBalance,
     fleetHealth: 100,
