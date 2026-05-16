@@ -7,6 +7,7 @@ import { AnalyticsDashboard } from './components/AnalyticsDashboard'
 import { CustomerProfiles } from './components/CustomerProfiles'
 import { BudgetPlanning } from './components/BudgetPlanning'
 import { StaffManagement } from './components/StaffManagement'
+import { KeyboardShortcuts } from './components/KeyboardShortcuts'
 import { OnboardingTutorial } from './components/OnboardingTutorial'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
@@ -105,6 +106,7 @@ function App() {
       </div>
     </Layout>
     <OnboardingTutorial onComplete={() => {}} />
+    <KeyboardShortcuts />
   </>
   )
 }
