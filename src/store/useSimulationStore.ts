@@ -29,9 +29,9 @@ interface SimulationActions {
 
 export const useSimulationStore = create(persist<SimulationState & SimulationActions>((set, get) => ({
   fleet: [
-    { id: '1', model: 'Rolls-Royce Ghost', status: 'available', health: 100, lastService: '2024-05-01', revenueGenerated: 50000, totalServiceHours: 0 },
-    { id: '2', model: 'Bentley Flying Spur', status: 'in-service', health: 92, lastService: '2024-04-15', revenueGenerated: 35000, totalServiceHours: 120 },
-    { id: '3', model: 'Maybach S-Class', status: 'maintenance', health: 45, lastService: '2024-03-20', revenueGenerated: 12000, totalServiceHours: 45 },
+    { id: '1', model: 'Rolls-Royce Ghost', status: 'available', health: 100, lastService: '2024-05-01', revenueGenerated: 50000, totalServiceHours: 0, maintenanceCosts: 0 },
+    { id: '2', model: 'Bentley Flying Spur', status: 'in-service', health: 92, lastService: '2024-04-15', revenueGenerated: 35000, totalServiceHours: 120, maintenanceCosts: 2500 },
+    { id: '3', model: 'Maybach S-Class', status: 'maintenance', health: 45, lastService: '2024-03-20', revenueGenerated: 12000, totalServiceHours: 45, maintenanceCosts: 8000 },
   ],
   transactions: [],
   totalBalance: 1250000,
@@ -101,13 +101,28 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
 
   toggleSimulation: () => set((state) => ({ isSimulating: !state.isSimulating })),
 
-  scheduleService: (id) => set((state) => ({
-    fleet: state.fleet.map(v =>
-      v.id === id
-        ? { ...v, status: 'maintenance' as const, lastService: new Date().toISOString().split('T')[0] }
-        : v
-    )
-  })),
+  scheduleService: (id) => set((state) => {
+    // Calculate maintenance cost based on vehicle health deficit
+    const vehicle = state.fleet.find(v => v.id === id)
+    if (!vehicle) return state
+    
+    const healthDeficit = 100 - vehicle.health
+    const maintenanceCost = healthDeficit * 50 // $50 per health point to restore
+    
+    return {
+      fleet: state.fleet.map(v =>
+        v.id === id
+          ? { 
+              ...v, 
+              status: 'maintenance' as const, 
+              lastService: new Date().toISOString().split('T')[0],
+              maintenanceCosts: v.maintenanceCosts + maintenanceCost
+            }
+          : v
+      ),
+      totalBalance: state.totalBalance - maintenanceCost
+    }
+  }),
 
   tick: () => {
     const state = get()

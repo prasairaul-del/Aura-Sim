@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
 import { GlassCard, StatusBadge } from '../../components/ui/GlassComponents'
-import { Car, DollarSign, Activity, Wrench, Trash2 } from 'lucide-react'
+import { Car, DollarSign, Wrench, Trash2 } from 'lucide-react'
 import { formatCurrency, cn } from '../../lib/utils'
 import { motion } from 'framer-motion'
 import { VehicleCatalog } from '../../components/VehicleCatalog'
@@ -78,9 +78,14 @@ export const FleetModule: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-1 text-[10px] text-white/50 uppercase mb-1">
-                    <Activity className="w-3 h-3" /> Efficiency
+                    <Wrench className="w-3 h-3" /> Maintenance
                   </div>
-                  <p className="font-mono text-sm">{vehicle.status === 'in-service' ? '94%' : '0%'}</p>
+                  <p className={cn(
+                    "font-mono text-sm",
+                    (vehicle.maintenanceCosts || 0) > 5000 ? "text-red-400" : "text-emerald-400"
+                  )}>
+                    {formatCurrency(vehicle.maintenanceCosts || 0)}
+                  </p>
                 </div>
               </div>
 

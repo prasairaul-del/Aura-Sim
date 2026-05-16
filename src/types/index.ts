@@ -15,6 +15,7 @@ export interface Vehicle {
   lastService: string;
   revenueGenerated: number;
   totalServiceHours: number;
+  maintenanceCosts: number; // Track total maintenance costs for this vehicle
 }
 
 export interface SimulationState {

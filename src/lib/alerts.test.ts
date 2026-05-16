@@ -70,6 +70,7 @@ describe('checkSimulationAlerts', () => {
     lastService: '2024-01-01',
     revenueGenerated: 0,
     totalServiceHours: 0,
+    maintenanceCosts: 0,
   })
 
   describe('vehicle health alerts', () => {

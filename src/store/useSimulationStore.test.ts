@@ -17,6 +17,7 @@ describe('useSimulationStore', () => {
         lastService: '2024-01-01',
         revenueGenerated: 0,
         totalServiceHours: 0,
+        maintenanceCosts: 0,
       })
       expect(useSimulationStore.getState().fleet.length).toBe(initialLength + 1)
     })
@@ -29,6 +30,7 @@ describe('useSimulationStore', () => {
         lastService: '2024-01-01',
         revenueGenerated: 0,
         totalServiceHours: 0,
+        maintenanceCosts: 0,
       })
       const newVehicle = useSimulationStore.getState().fleet.at(-1)
       expect(newVehicle?.id).toBeDefined()

@@ -43,6 +43,7 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
       lastService: new Date().toISOString().split('T')[0],
       revenueGenerated: 0,
       totalServiceHours: 0,
+      maintenanceCosts: 0,
     })
 
     // Deduct cost via a transaction
