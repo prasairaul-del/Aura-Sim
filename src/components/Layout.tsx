@@ -10,6 +10,10 @@ export const Layout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('light', !darkMode)
+  }, [darkMode])
+
   // Close mobile menu on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -33,7 +37,7 @@ export const Layout: React.FC = () => {
   ]
 
   return (
-    <div className={`min-h-screen text-foreground relative overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-[#050505]' : 'bg-gray-100'}`}>
+    <div className="min-h-screen relative overflow-hidden transition-colors duration-300" style={{ backgroundColor: 'var(--app-bg)', color: 'var(--app-text)' }}>
       {/* Skip to main content link for screen readers */}
       <a
         href="#main-content"
@@ -50,7 +54,7 @@ export const Layout: React.FC = () => {
         </>
       )}
 
-      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 sm:py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 sm:py-6 flex justify-between items-center border-b" style={{ borderColor: 'var(--app-card-border)' }} role="navigation" aria-label="Main navigation">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)]">
             <span className="font-bold text-onyx-950">A</span>
@@ -59,13 +63,13 @@ export const Layout: React.FC = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-8 text-sm font-medium text-white/60">
+        <div className="hidden md:flex gap-8 text-sm font-medium" style={{ color: 'var(--app-nav-text)' }}>
           {navLinks.map(link => (
             <Link
               key={link.path}
               to={link.path}
               className={cn(
-                "hover:text-emerald-400 transition-colors",
+                "hover:text-emerald-400 transition-colors duration-150",
                 location.pathname === link.path && "text-emerald-400 font-bold"
               )}
             >
@@ -77,10 +81,11 @@ export const Layout: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="p-2 bg-white/5 border border-white/10 rounded-full text-xs hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            className="p-2 border rounded-lg text-xs transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)' }}
             aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {darkMode ? <Sun className="w-4 h-4 text-gold-400" /> : <Moon className="w-4 h-4" />}
+            {darkMode ? <Sun className="w-4 h-4 text-gold-400" /> : <Moon className="w-4 h-4" style={{ color: 'var(--app-moon-icon-light)' }} />}
           </button>
           <div className="hidden sm:block">
             <AlertPanel />
@@ -89,7 +94,8 @@ export const Layout: React.FC = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 bg-white/5 border border-white/10 rounded-lg text-xs hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            className="md:hidden p-2 border rounded-lg text-xs transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)' }}
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -106,7 +112,8 @@ export const Layout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-[60px] left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/10 z-40 md:hidden"
+            className="fixed top-[60px] left-0 w-full backdrop-blur-lg border-b z-40 md:hidden"
+            style={{ backgroundColor: 'var(--app-overlay-bg)', borderColor: 'var(--app-card-border)' }}
           >
             <div className="flex flex-col p-4 space-y-2">
               {navLinks.map(link => (
@@ -114,15 +121,16 @@ export const Layout: React.FC = () => {
                   key={link.path}
                   to={link.path}
                   className={cn(
-                    "px-4 py-3 text-sm font-medium text-white/60 hover:text-emerald-400 hover:bg-white/5 rounded-lg transition-all",
+                    "px-4 py-3 text-sm font-medium hover:text-emerald-400 rounded-lg transition-colors duration-150",
                     location.pathname === link.path && "text-emerald-400 font-bold bg-white/5"
                   )}
+                  style={{ color: 'var(--app-nav-text)' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="pt-2 border-t border-white/10">
+              <div className="pt-2 border-t" style={{ borderColor: 'var(--app-card-border)' }}>
                 <AlertPanel />
               </div>
             </div>

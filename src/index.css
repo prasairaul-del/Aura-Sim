@@ -3,26 +3,68 @@
 @theme {
   --color-background: #050505;
   --color-foreground: #fafafa;
-  
+
   --color-emerald-950: #022c22;
   --color-emerald-900: #064e3b;
   --color-emerald-800: #065f46;
   --color-emerald: #10b981;
   --color-emerald-400: #10b981;
-  
+
   --color-gold-500: #d4af37;
   --color-gold-400: #fbbf24;
   --color-gold-300: #fcd34d;
-  
+
   --color-onyx-950: #050505;
   --color-onyx-900: #0a0a0a;
   --color-onyx-800: #121212;
   --color-onyx-700: #181818;
 }
 
+:root {
+  --app-bg: #050505;
+  --app-text: #fafafa;
+  --app-text-muted: rgba(255, 255, 255, 0.6);
+  --app-text-faint: rgba(255, 255, 255, 0.4);
+  --app-card-bg: rgba(255, 255, 255, 0.05);
+  --app-card-bg-hover: rgba(255, 255, 255, 0.08);
+  --app-card-border: rgba(255, 255, 255, 0.1);
+  --app-nav-text: rgba(255, 255, 255, 0.6);
+  --app-input-bg: rgba(255, 255, 255, 0.05);
+  --app-input-border: rgba(255, 255, 255, 0.1);
+  --app-input-text: rgba(255, 255, 255, 0.7);
+  --app-option-bg: #0a0a0a;
+  --app-overlay-bg: rgba(10, 10, 10, 0.95);
+  --app-border-light: rgba(255, 255, 255, 0.05);
+  --app-scroll-thumb: rgba(255, 255, 255, 0.1);
+  --app-scroll-thumb-hover: rgba(255, 255, 255, 0.2);
+  --app-moon-icon: #d4af37;
+  --app-moon-icon-light: #333;
+}
+
+.light {
+  --app-bg: #f3f4f6;
+  --app-text: #111827;
+  --app-text-muted: #6b7280;
+  --app-text-faint: #9ca3af;
+  --app-card-bg: #ffffff;
+  --app-card-bg-hover: #f9fafb;
+  --app-card-border: #e5e7eb;
+  --app-nav-text: #6b7280;
+  --app-input-bg: #ffffff;
+  --app-input-border: #d1d5db;
+  --app-input-text: #374151;
+  --app-option-bg: #ffffff;
+  --app-overlay-bg: rgba(243, 244, 246, 0.95);
+  --app-border-light: #e5e7eb;
+  --app-scroll-thumb: #d1d5db;
+  --app-scroll-thumb-hover: #9ca3af;
+  --app-moon-icon: #6b7280;
+  --app-moon-icon-light: #111827;
+}
+
 body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+  background-color: var(--app-bg);
+  color: var(--app-text);
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
@@ -32,11 +74,11 @@ body::selection {
 }
 
 .glass-card {
-  background-color: rgb(255 255 255 / 0.05);
+  background-color: var(--app-card-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid rgb(255 255 255 / 0.1);
-  border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  border: 1px solid var(--app-card-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .emerald-text-glow {
@@ -64,11 +106,11 @@ body::selection {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.1);
+  background: var(--app-scroll-thumb);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(255 255 255 / 0.2);
+  background: var(--app-scroll-thumb-hover);
 }
 
 /* Reduced motion preference */
@@ -79,3 +121,53 @@ body::selection {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================
+   Light mode overrides for dark-mode utilities
+   ============================================ */
+
+/* Text color overrides */
+.light .text-white\/80 { color: #374151 !important; }
+.light .text-white\/70 { color: #4b5563 !important; }
+.light .text-white\/60 { color: #6b7280 !important; }
+.light .text-white\/50 { color: #9ca3af !important; }
+.light .text-white\/40 { color: #a1a1aa !important; }
+.light .text-white\/30 { color: #d4d4d8 !important; }
+.light .text-white\/25 { color: #d4d4d8 !important; }
+.light .text-red-300 { color: #ef4444 !important; }
+
+/* Background overrides */
+.light .bg-white\/5 { background-color: #ffffff !important; }
+.light .bg-white\/10 { background-color: #f3f4f6 !important; }
+.light .bg-white\/20 { background-color: #e5e7eb !important; }
+
+/* Border overrides */
+.light .border-white\/5,
+.light .border-white\/10 { border-color: #e5e7eb !important; }
+.light .border-white\/20 { border-color: #d1d5db !important; }
+
+/* Hover overrides */
+.light .hover\:bg-white\/5:hover { background-color: #f9fafb !important; }
+.light .hover\:bg-white\/10:hover { background-color: #f3f4f6 !important; }
+.light .hover\:bg-white\/20:hover { background-color: #e5e7eb !important; }
+.light .hover\:text-white:hover { color: #111827 !important; }
+.light .hover\:border-emerald-500\/30:hover { border-color: #10b981 !important; }
+
+/* Select and option */
+.light select { background-color: #ffffff !important; color: #374151 !important; }
+.light option { background-color: #ffffff !important; color: #111827 !important; }
+
+/* Scrollbar */
+.light ::-webkit-scrollbar-thumb { background: #d1d5db !important; }
+.light ::-webkit-scrollbar-thumb:hover { background: #9ca3af !important; }
+
+/* Progress bar bg */
+.light .bg-emerald-500\/20 { background-color: #d1fae5 !important; }
+.light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; }
+.light .bg-red-500\/20 { background-color: #fee2e2 !important; }
+.light .bg-red-500\/10 { background-color: #fef2f2 !important; }
+.light .bg-gold-500\/20 { background-color: #fef3c7 !important; }
+
+/* Colored hover states */
+.light .hover\:bg-red-500\/10:hover { background-color: #fef2f2 !important; }
+.light .hover\:text-red-400:hover { color: #ef4444 !important; }

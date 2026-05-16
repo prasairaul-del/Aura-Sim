@@ -18,12 +18,12 @@ export function KPICards({ currency }: KPICardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {kpis.map((kpi, i) => (
-        <div key={i} className="glass-card p-6 flex items-center gap-6 border-white/5">
-          <div className="p-4 bg-white/5 rounded-2xl">
+        <div key={i} className="glass-card p-6 flex items-center gap-6" style={{ borderColor: 'var(--app-border-light)' }}>
+          <div className="p-4 rounded-2xl" style={{ backgroundColor: 'var(--app-card-bg)' }}>
             <kpi.icon className={cn("w-6 h-6", kpi.color)} />
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/60 mb-1">{kpi.label}</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] mb-1" style={{ color: 'var(--app-text-muted)' }}>{kpi.label}</p>
             <p className="text-2xl font-bold font-mono tracking-tighter">{kpi.value}</p>
           </div>
         </div>
