@@ -94,7 +94,7 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
         ...vehicle,
         health: Math.max(0, Math.min(100, vehicle.health + healthChange)),
         revenueGenerated: vehicle.revenueGenerated + revenue,
-        totalServiceHours: vehicle.status === 'in-service' ? (vehicle.totalServiceHours || 0) + 0.01 : (vehicle.totalServiceHours || 0),
+        totalServiceHours: vehicle.status === 'in-service' ? (vehicle.totalServiceHours || 0) + (1 / 3600) : (vehicle.totalServiceHours || 0),
       }
     })
 
@@ -102,26 +102,32 @@ export const useSimulationStore = create(persist<SimulationState & SimulationAct
 
     // Generate random transactions to show activity
     const newTransactions = [...state.transactions]
+    let transactionBalanceChange = 0
     if (Math.random() < TRANSACTION_CHANCE) {
       const isIncome = Math.random() > 0.3
       const amount = isIncome
         ? Math.random() * (INCOME_AMOUNT_MAX - INCOME_AMOUNT_MIN) + INCOME_AMOUNT_MIN
         : Math.random() * (EXPENSE_AMOUNT_MAX - EXPENSE_AMOUNT_MIN) + EXPENSE_AMOUNT_MIN
-      newTransactions.unshift({
+      const newTx: Transaction = {
         id: Math.random().toString(36).substring(2, 9),
         date: new Date().toISOString(),
         merchant: isIncome ? "VIP Client Transfer" : "Fuel & Logistics",
         category: isIncome ? "VIP Services" : "Operations",
         amount,
         type: isIncome ? "income" : "expense"
-      })
+      }
+      newTransactions.unshift(newTx)
+      transactionBalanceChange = isIncome ? amount : -amount
     }
 
     set({
       fleet: updatedFleet,
-      fleetHealth: Math.round(avgHealth),
+      fleetHealth: updatedFleet.length > 0 ? Math.round(avgHealth) : 0,
+      operationalEfficiency: updatedFleet.length > 0
+        ? Math.round((updatedFleet.filter(v => v.status === 'in-service').length / updatedFleet.length) * 100)
+        : 0,
       transactions: newTransactions.slice(0, MAX_TRANSACTIONS),
-      totalBalance: state.totalBalance + (newTransactions[0]?.type === 'income' ? newTransactions[0].amount : 0) - (newTransactions[0]?.type === 'expense' ? newTransactions[0].amount : 0)
+      totalBalance: state.totalBalance + transactionBalanceChange
     })
   }
 }), { name: 'aura-sim-storage' }))

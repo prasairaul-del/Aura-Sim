@@ -81,9 +81,13 @@ Category: Maintenance`;
     if (lowerText.includes('fuel') || lowerText.includes('gas') || lowerText.includes('petrol')) {
       category = 'Fleet';
     } else if (lowerText.includes('maintenance') || lowerText.includes('repair') || lowerText.includes('service')) {
-      category = 'Maintenance';
+      category = 'Operations'; // Mapped to Operations since Maintenance isn't a valid category
     } else if (lowerText.includes('food') || lowerText.includes('restaurant') || lowerText.includes('dining')) {
       category = 'VIP Services';
+    } else if (lowerText.includes('marketing') || lowerText.includes('advertising')) {
+      category = 'Marketing';
+    } else if (lowerText.includes('staff') || lowerText.includes('salary') || lowerText.includes('payroll')) {
+      category = 'Staff';
     }
     
     return `OCR Analysis Complete:
@@ -98,8 +102,7 @@ ${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`;
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png'],
-      'application/pdf': ['.pdf']
+      'image/*': ['.jpeg', '.jpg', '.png']
     },
     multiple: false
   });
@@ -146,7 +149,7 @@ ${text.substring(0, 500)}${text.length > 500 ? '...' : ''}`;
                 <Upload className="w-6 h-6 text-emerald-400" />
               </div>
               <p className="text-white font-medium mb-1">Drop receipt here</p>
-              <p className="text-white/40 text-sm">PDF, PNG, or JPG (Max 5MB)</p>
+              <p className="text-white/40 text-sm">PNG or JPG (Max 5MB)</p>
             </motion.div>
           )}
         </AnimatePresence>
