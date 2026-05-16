@@ -11,6 +11,17 @@ export const AlertPanel: React.FC = () => {
   const totalBalance = useSimulationStore((s) => s.totalBalance)
   const [isOpen, setIsOpen] = useState(false)
 
+  // Close panel on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isOpen])
+
   // Check for new alerts on each render (during simulation)
   useEffect(() => {
     const newAlerts = checkSimulationAlerts(fleet, totalBalance, alerts)

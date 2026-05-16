@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { AlertPanel } from "./AlertPanel"
 import { Sun, Moon, Menu, X } from "lucide-react"
@@ -11,6 +11,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [darkMode, setDarkMode] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [mobileMenuOpen])
+
   const navLinks = [
     { href: '#dashboard', label: 'DASHBOARD' },
     { href: '#fleet', label: 'FLEET' },
@@ -20,6 +31,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className={`min-h-screen text-foreground relative overflow-hidden transition-colors duration-500 ${darkMode ? 'bg-[#050505]' : 'bg-gray-100'}`}>
+      {/* Skip to main content link for screen readers */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-onyx-950 focus:rounded-lg focus:font-bold"
+      >
+        Skip to main content
+      </a>
+
       {/* Background Ambient Glows */}
       {darkMode && (
         <>
@@ -28,7 +47,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </>
       )}
 
-      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 sm:py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
+      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 sm:py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)]">
             <span className="font-bold text-onyx-950">A</span>
@@ -98,7 +117,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}
       </AnimatePresence>
 
-      <main className="pt-20 sm:pt-24 px-4 sm:px-8 pb-12 relative z-10">
+      <main id="main-content" className="pt-20 sm:pt-24 px-4 sm:px-8 pb-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
