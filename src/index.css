@@ -1,39 +1,72 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-background text-foreground antialiased selection:bg-gold-500/30;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
+@theme {
+  --color-background: #050505;
+  --color-foreground: #fafafa;
+  
+  --color-emerald-950: #022c22;
+  --color-emerald-900: #064e3b;
+  --color-emerald-800: #065f46;
+  --color-emerald: #10b981;
+  --color-emerald-400: #10b981;
+  
+  --color-gold-500: #d4af37;
+  --color-gold-400: #fbbf24;
+  --color-gold-300: #fcd34d;
+  
+  --color-onyx-950: #050505;
+  --color-onyx-900: #0a0a0a;
+  --color-onyx-800: #121212;
+  --color-onyx-700: #181818;
 }
 
-@layer components {
-  .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl;
-  }
-  
-  .emerald-text-glow {
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-  }
-  
-  .gold-text-glow {
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-  }
-
-  .interactive-button {
-    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
-  }
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Custom Scrollbar */
+body::selection {
+  background-color: rgb(212 175 55 / 0.3);
+}
+
+.glass-card {
+  background-color: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.emerald-text-glow {
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.gold-text-glow {
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.interactive-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 300ms;
+}
+
+.interactive-button:active {
+  transform: scale(0.95);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  background: rgb(255 255 255 / 0.1);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.2);
 }
