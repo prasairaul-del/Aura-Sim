@@ -1,13 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
 import { GlassCard, StatusBadge } from '../../components/ui/GlassComponents'
-import { Car, DollarSign, Activity, Wrench } from 'lucide-react'
+import { Car, DollarSign, Activity, Wrench, Trash2 } from 'lucide-react'
 import { formatCurrency, cn } from '../../lib/utils'
 import { motion } from 'framer-motion'
+import { VehicleCatalog } from '../../components/VehicleCatalog'
 
 export const FleetModule: React.FC = () => {
   const fleet = useSimulationStore((state) => state.fleet)
   const scheduleService = useSimulationStore((state) => state.scheduleService)
+  const removeVehicle = useSimulationStore((state) => state.removeVehicle)
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false)
+
+  const handleSellVehicle = (vehicle: typeof fleet[0]) => {
+    if (confirm(`Sell ${vehicle.model} for $${(vehicle.revenueGenerated * 0.5).toLocaleString()}?`)) {
+      removeVehicle(vehicle.id)
+    }
+  }
 
   return (
     <div className="space-y-6" id="fleet">
@@ -99,23 +108,6 @@ export const FleetModule: React.FC = () => {
       </div>
 
       <VehicleCatalog isOpen={isCatalogOpen} onClose={() => setIsCatalogOpen(false)} />
-    </div>
-  )
-}
-                  Schedule Service
-                </button>
-              )}
-            </div>
-          </GlassCard>
-        ))}
-      </div>
-    </div>
-  )
-}
-  )
-}
-        ))}
-      </div>
     </div>
   )
 }

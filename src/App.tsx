@@ -5,7 +5,7 @@ import { VirtualCOO } from './features/ai/VirtualCOO'
 import { PerformanceChart } from './components/PerformanceChart'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
-import { formatCurrency, cn, AVAILABLE_CURRENCIES } from './lib/utils'
+import { cn, AVAILABLE_CURRENCIES, formatCurrencyFromUSD } from './lib/utils'
 import { TrendingUp, ShieldCheck, Zap, Globe } from 'lucide-react'
 
 function App() {

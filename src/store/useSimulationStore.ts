@@ -17,8 +17,11 @@ import {
 
 interface SimulationActions {
   addVehicle: (vehicle: Omit<Vehicle, 'id'>) => void
+  removeVehicle: (id: string) => void
   updateVehicleHealth: (id: string, health: number) => void
   addTransaction: (transaction: Omit<Transaction, 'id' | 'date'>) => void
+  editTransaction: (id: string, updates: Partial<Omit<Transaction, 'id' | 'date'>>) => void
+  deleteTransaction: (id: string) => void
   toggleSimulation: () => void
   tick: () => void
   scheduleService: (id: string) => void

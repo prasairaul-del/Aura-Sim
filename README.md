@@ -33,12 +33,18 @@ A highly stylized, cinematic financial simulator for luxury fleet management. Au
 3. Set up environment variables:
    ```bash
    cp .env.example .env
-   # Add your VITE_GEMINI_API_KEY to .env
+   # Add your GEMINI_API_KEY to .env (backend proxy)
    ```
-4. Start the development server:
+4. Start the backend proxy server (recommended for production):
+   ```bash
+   npm run proxy
+   ```
+5. In a new terminal, start the development server:
    ```bash
    npm run dev
    ```
+
+**Note:** The backend proxy protects your API keys by keeping them server-side. For development only, you can still use `VITE_GEMINI_API_KEY` directly in the frontend, but this is not recommended for production.
 
 ## 🧪 Testing
 Run the Playwright E2E suite:
@@ -47,4 +53,14 @@ npx playwright test
 ```
 
 ## 📜 Deployment
-The project is configured for instant deployment on Vercel or Netlify. Ensure the `VITE_GEMINI_API_KEY` is added to your production environment variables.
+
+### Frontend (Vercel/Netlify)
+The project is configured for instant deployment on Vercel or Netlify. Set the `VITE_PROXY_URL` environment variable to point to your deployed proxy server.
+
+### Backend Proxy (Railway/Render/Fly.io)
+Deploy the proxy server separately to protect your Gemini API key:
+1. Set `GEMINI_API_KEY` in your hosting platform's environment variables
+2. Deploy `server.ts` as a Node.js application
+3. Update `VITE_PROXY_URL` in your frontend to match the deployed proxy URL
+
+**Security Note:** Never expose your `GEMINI_API_KEY` in frontend code. Always use the backend proxy in production.

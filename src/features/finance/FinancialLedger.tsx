@@ -3,7 +3,7 @@ import { useSimulationStore } from '../../store/useSimulationStore'
 import { GlassCard } from '../../components/ui/GlassComponents'
 import { OCRDropzone } from './OCRDropzone'
 import { formatCurrency, cn } from '../../lib/utils'
-import { ArrowUpRight, ArrowDownRight, ReceiptText, Plus, Search, Download } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, ReceiptText, Plus, Search, Download, Edit, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMemo, useState } from 'react'
 
@@ -13,10 +13,43 @@ type TransactionType = 'income' | 'expense'
 type FilterType = 'all' | TransactionType
 
 export const FinancialLedger: React.FC = () => {
-  const { transactions, addTransaction } = useSimulationStore()
+  const { transactions, addTransaction, editTransaction, deleteTransaction } = useSimulationStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState<FilterType>('all')
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState<{ merchant: string; amount: string; type: TransactionType }>({
+    merchant: '',
+    amount: '',
+    type: 'expense'
+  })
+
+  const startEdit = (t: typeof transactions[0]) => {
+    setEditingId(t.id)
+    setEditForm({
+      merchant: t.merchant,
+      amount: Math.abs(t.amount).toString(),
+      type: t.type
+    })
+  }
+
+  const saveEdit = (id: string) => {
+    const amount = parseFloat(editForm.amount)
+    if (isNaN(amount)) return
+    
+    editTransaction(id, {
+      merchant: editForm.merchant,
+      amount: editForm.type === 'income' ? amount : -amount,
+      type: editForm.type
+    })
+    setEditingId(null)
+  }
+
+  const handleDelete = (id: string) => {
+    if (confirm('Delete this transaction? This will reverse its effect on your balance.')) {
+      deleteTransaction(id)
+    }
+  }
 
   const handleOCRResult = (result: string) => {
     const totalMatch = result.match(/Total:\s*\$?([\d,]+\.?\d*)/)
@@ -303,32 +336,6 @@ export const FinancialLedger: React.FC = () => {
                 ))
               )}
             </AnimatePresence>
-          </div>
-        </GlassCard>
-      </div>
-    </div>
-  )
-}
-                    </div>
-                    <div className="text-right">
-                      <p className={cn(
-                        "font-mono text-sm font-bold",
-                        t.type === 'income' ? "text-emerald-400" : "text-red-400"
-                      )} aria-label={`${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}`}>
-                        {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
-                      </p>
-                      <p className="text-[8px] text-white/25 uppercase tracking-tighter">Verified</p>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
-          </div>
-        </GlassCard>
-      </div>
-    </div>
-  )
-}
           </div>
         </GlassCard>
       </div>
