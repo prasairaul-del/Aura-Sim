@@ -1,0 +1,15 @@
+{
+  "id": "standard_fleet",
+  "name": "Standard Fleet",
+  "description": "A balanced fleet of 20 limousines with $2M starting capital",
+  "initial_balance": 2000000.0,
+  "vehicles": [
+    {"type": "limousine", "count": 20}
+  ],
+  "difficulty": "easy",
+  "objectives": [
+    "Achieve $5M in total revenue",
+    "Maintain fleet health above 70%",
+    "Complete 365-day simulation"
+  ]
+}
