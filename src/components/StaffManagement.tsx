@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SimpleCard } from './ui/GlassComponents'
+import { Button, FormInput, FormSelect, Modal, SectionHeader, SimpleCard, StatCard } from './ui/GlassComponents'
 import { formatCurrency } from '../lib/utils'
 import { Users, UserPlus, UserMinus, DollarSign, Star, Briefcase } from 'lucide-react'
 
@@ -68,57 +68,43 @@ export const StaffManagement: React.FC = () => {
 
   return (
     <div className="space-y-6" id="staff">
-      <div className="flex justify-between items-end">
-        <div>
-          <h3 className="text-2xl font-bold tracking-tight">Staff management</h3>
-          <p className="text-muted-foreground text-sm">Manage team members, salaries, and performance</p>
-        </div>
-        <button
-          onClick={() => setShowHireModal(true)}
-          className="px-4 py-2 bg-emerald-500 text-white rounded-md text-sm font-medium hover:bg-emerald-600 transition-colors flex items-center gap-2"
-        >
-          <UserPlus className="w-4 h-4" />
-          Hire staff
-        </button>
-      </div>
+      <SectionHeader
+        title="Staff management"
+        description="Manage team members, salaries, and performance"
+        action={
+          <Button onClick={() => setShowHireModal(true)}>
+            <UserPlus className="w-4 h-4" />
+            Hire staff
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Users className="w-5 h-5 text-emerald-500" />
-            <span className="text-xs text-muted-foreground">Active staff</span>
-          </div>
-          <p className="text-2xl font-bold">{activeStaff.length}</p>
-          <p className="text-xs text-muted-foreground mt-1">Total team members</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="w-5 h-5 text-amber-500" />
-            <span className="text-xs text-muted-foreground">Monthly payroll</span>
-          </div>
-          <p className="text-2xl font-bold">{formatCurrency(totalMonthlySalary)}</p>
-          <p className="text-xs text-muted-foreground mt-1">Total salaries</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Star className="w-5 h-5 text-emerald-500" />
-            <span className="text-xs text-muted-foreground">Avg performance</span>
-          </div>
-          <p className={`text-2xl font-bold ${getPerformanceColor(avgPerformance)}`}>{avgPerformance}%</p>
-          <p className="text-xs text-muted-foreground mt-1">Team average</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Briefcase className="w-5 h-5 text-amber-500" />
-            <span className="text-xs text-muted-foreground">Departments</span>
-          </div>
-          <p className="text-2xl font-bold">{new Set(activeStaff.map(s => s.department)).size}</p>
-          <p className="text-xs text-muted-foreground mt-1">Active departments</p>
-        </SimpleCard>
+        <StatCard
+          icon={<Users className="w-5 h-5 text-emerald-500" />}
+          label="Active staff"
+          value={activeStaff.length.toString()}
+          subtext="Total team members"
+        />
+        <StatCard
+          icon={<DollarSign className="w-5 h-5 text-amber-500" />}
+          label="Monthly payroll"
+          value={formatCurrency(totalMonthlySalary)}
+          subtext="Total salaries"
+        />
+        <StatCard
+          icon={<Star className="w-5 h-5 text-emerald-500" />}
+          label="Avg performance"
+          value={`${avgPerformance}%`}
+          subtext="Team average"
+        />
+        <StatCard
+          icon={<Briefcase className="w-5 h-5 text-amber-500" />}
+          label="Departments"
+          value={new Set(activeStaff.map(s => s.department)).size.toString()}
+          subtext="Active departments"
+        />
       </div>
 
       {/* Staff Directory */}
@@ -250,74 +236,45 @@ export const StaffManagement: React.FC = () => {
       </SimpleCard>
 
       {/* Hire Modal */}
-      {showHireModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true">
-          <SimpleCard className="w-full max-w-md">
-            <h4 className="text-lg font-semibold mb-4">Hire new staff member</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Full name *</label>
-                <input
-                  type="text"
-                  value={newStaff.name}
-                  onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="Enter full name"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Role/title *</label>
-                <input
-                  type="text"
-                  value={newStaff.role}
-                  onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="e.g., Senior Driver"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Department</label>
-                <select
-                  value={newStaff.department}
-                  onChange={(e) => setNewStaff({ ...newStaff, department: e.target.value })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  <option value="Operations">Operations</option>
-                  <option value="Fleet">Fleet</option>
-                  <option value="Maintenance">Maintenance</option>
-                  <option value="Marketing">Marketing</option>
-                  <option value="Finance">Finance</option>
-                  <option value="HR">HR</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Monthly salary ($)</label>
-                <input
-                  type="number"
-                  value={newStaff.salary || ''}
-                  onChange={(e) => setNewStaff({ ...newStaff, salary: Number(e.target.value) })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleHire}
-                  className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-md font-medium hover:bg-emerald-600 transition-colors"
-                >
-                  Hire employee
-                </button>
-                <button
-                  onClick={() => setShowHireModal(false)}
-                  className="px-4 py-2 border rounded-md text-muted-foreground hover:bg-muted transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </SimpleCard>
+      <Modal isOpen={showHireModal} onClose={() => setShowHireModal(false)} title="Hire new staff member" size="sm">
+        <div className="space-y-4">
+          <FormInput
+            label="Full name *"
+            value={newStaff.name}
+            onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+            placeholder="Enter full name"
+          />
+          <FormInput
+            label="Role/title *"
+            value={newStaff.role}
+            onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
+            placeholder="e.g., Senior Driver"
+          />
+          <FormSelect
+            label="Department"
+            value={newStaff.department}
+            onChange={(e) => setNewStaff({ ...newStaff, department: e.target.value })}
+          >
+            <option value="Operations" style={{ backgroundColor: 'var(--app-option-bg)' }}>Operations</option>
+            <option value="Fleet" style={{ backgroundColor: 'var(--app-option-bg)' }}>Fleet</option>
+            <option value="Maintenance" style={{ backgroundColor: 'var(--app-option-bg)' }}>Maintenance</option>
+            <option value="Marketing" style={{ backgroundColor: 'var(--app-option-bg)' }}>Marketing</option>
+            <option value="Finance" style={{ backgroundColor: 'var(--app-option-bg)' }}>Finance</option>
+            <option value="HR" style={{ backgroundColor: 'var(--app-option-bg)' }}>HR</option>
+          </FormSelect>
+          <FormInput
+            label="Monthly salary ($)"
+            type="number"
+            value={newStaff.salary || ''}
+            onChange={(e) => setNewStaff({ ...newStaff, salary: Number(e.target.value) })}
+            placeholder="0.00"
+          />
+          <div className="flex gap-3 pt-2">
+            <Button onClick={handleHire} className="flex-1">Hire employee</Button>
+            <Button variant="secondary" onClick={() => setShowHireModal(false)}>Cancel</Button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { SimpleCard } from './ui/GlassComponents'
+import { SectionHeader, SimpleCard, StatCard } from './ui/GlassComponents'
 import { formatCurrency } from '../lib/utils'
-import { TrendingUp, TrendingDown, DollarSign, Activity, Wrench, Car } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, Wrench, Car } from 'lucide-react'
 import {
   LineChart,
   Line,
@@ -53,63 +53,42 @@ export const AnalyticsDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6" id="analytics">
-      <div>
-        <h3 className="text-base font-semibold">Analytics Dashboard</h3>
-        <p style={{ color: 'var(--app-text-muted)' }} className="text-sm mt-1">Fleet performance insights</p>
-      </div>
+      <SectionHeader
+        title="Analytics Dashboard"
+        description="Fleet performance insights"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Total Revenue</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{formatCurrency(totalRevenue)}</p>
-          <div className="flex items-center gap-1 mt-2 text-xs text-emerald-400">
-            <TrendingUp className="w-3 h-3" />
-            <span>All time</span>
-          </div>
-        </SimpleCard>
+        <StatCard
+          icon={<DollarSign className="w-5 h-5 text-emerald-400" />}
+          label="Total Revenue"
+          value={formatCurrency(totalRevenue)}
+          subtext="All time"
+        />
 
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Wrench className="w-5 h-5 text-gold-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Maintenance Costs</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{formatCurrency(totalMaintenanceCosts)}</p>
-          <div className="flex items-center gap-1 mt-2 text-xs text-gold-400">
-            <Activity className="w-3 h-3" />
-            <span>{fleet.length} vehicles</span>
-          </div>
-        </SimpleCard>
+        <StatCard
+          icon={<Wrench className="w-5 h-5 text-gold-400" />}
+          label="Maintenance Costs"
+          value={formatCurrency(totalMaintenanceCosts)}
+          subtext={`${fleet.length} vehicles`}
+        />
 
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            {netProfit >= 0 ? (
-              <TrendingUp className="w-5 h-5 text-emerald-400" />
-            ) : (
-              <TrendingDown className="w-5 h-5 text-red-400" />
-            )}
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Net Profit</span>
-          </div>
-          <p className={`text-xl font-semibold font-mono ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatCurrency(netProfit)}
-          </p>
-          <div className="flex items-center gap-1 mt-2 text-xs" style={{ color: 'var(--app-text-muted)' }}>
-            <span>Revenue - Costs</span>
-          </div>
-        </SimpleCard>
+        <StatCard
+          icon={netProfit >= 0
+            ? <TrendingUp className="w-5 h-5 text-emerald-400" />
+            : <TrendingDown className="w-5 h-5 text-red-400" />
+          }
+          label="Net Profit"
+          value={formatCurrency(netProfit)}
+          subtext="Revenue - Costs"
+        />
 
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Car className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Avg Health</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{avgHealth}%</p>
-          <div className="flex items-center gap-1 mt-2 text-xs" style={{ color: 'var(--app-text-muted)' }}>
-            <span>Fleet viability</span>
-          </div>
-        </SimpleCard>
+        <StatCard
+          icon={<Car className="w-5 h-5 text-emerald-400" />}
+          label="Avg Health"
+          value={`${avgHealth}%`}
+          subtext="Fleet viability"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
-import { SimpleCard } from '../../components/ui/GlassComponents'
+import { Button, FormInput, FormSelect, SectionHeader, SimpleCard } from '../../components/ui/GlassComponents'
 import { OCRDropzone } from './OCRDropzone'
 import { formatCurrency, cn } from '../../lib/utils'
 import { ArrowUpRight, ArrowDownRight, ReceiptText, Plus, Search, Download, Edit, Trash2 } from 'lucide-react'
@@ -113,26 +113,18 @@ export const FinancialLedger: React.FC = () => {
     })
   }, [transactions, searchQuery, typeFilter, categoryFilter])
 
-  const inputClass = "w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-end">
-        <div>
-          <h3 className="text-base font-semibold">Financial Ledger</h3>
-          <p style={{ color: 'var(--app-text-muted)' }} className="text-sm mt-1">Track transactions and manage finances</p>
-        </div>
-        <button
-          onClick={exportCSV}
-          disabled={transactions.length === 0}
-          className="flex items-center gap-2 px-3 py-1.5 border text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
-          style={{ backgroundColor: 'var(--app-card-bg)', borderColor: 'var(--app-card-border)', borderRadius: '6px', color: 'var(--app-text-muted)' }}
-          aria-label="Export transactions to CSV"
-        >
-          <Download className="w-3 h-3" />
-          Export CSV
-        </button>
-      </div>
+      <SectionHeader
+        title="Financial Ledger"
+        description="Track transactions and manage finances"
+        action={
+          <Button variant="secondary" onClick={exportCSV} disabled={transactions.length === 0} aria-label="Export transactions to CSV">
+            <Download className="w-3 h-3" />
+            Export CSV
+          </Button>
+        }
+      />
 
       <OCRDropzone onAnalysisComplete={handleOCRResult} />
 
@@ -144,42 +136,18 @@ export const FinancialLedger: React.FC = () => {
             <h4 className="text-sm font-medium">New Entry</h4>
           </div>
           <form onSubmit={handleManualEntry} className="space-y-3">
-            <div>
-              <label htmlFor="merchant-input" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Merchant / Source</label>
-              <input id="merchant-input" name="merchant" required
-                className={`${inputClass} bg-white/5`}
-                style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                placeholder="e.g. Jet A1 Fueling" />
-            </div>
+            <FormInput name="merchant" required id="merchant-input" placeholder="e.g. Jet A1 Fueling" label="Merchant / Source" />
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="amount-input" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Amount</label>
-                <input id="amount-input" name="amount" type="number" step="0.01" required
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  placeholder="0.00" />
-              </div>
-              <div>
-                <label htmlFor="type-select" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Type</label>
-                <select id="type-select" name="type"
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}>
-                  <option value="expense" style={{ backgroundColor: 'var(--app-option-bg)' }}>Expense</option>
-                  <option value="income" style={{ backgroundColor: 'var(--app-option-bg)' }}>Income</option>
-                </select>
-              </div>
+              <FormInput name="amount" type="number" step="0.01" required id="amount-input" placeholder="0.00" label="Amount" />
+              <FormSelect name="type" id="type-select" label="Type">
+                <option value="expense" style={{ backgroundColor: 'var(--app-option-bg)' }}>Expense</option>
+                <option value="income" style={{ backgroundColor: 'var(--app-option-bg)' }}>Income</option>
+              </FormSelect>
             </div>
-            <div>
-              <label htmlFor="category-select" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Category</label>
-              <select id="category-select" name="category"
-                className={`${inputClass} bg-white/5`}
-                style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}>
-                {CATEGORIES.map(c => <option key={c} value={c} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c}</option>)}
-              </select>
-            </div>
-            <button type="submit" className="w-full py-2.5 bg-emerald-500 text-onyx-950 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50" style={{ borderRadius: '6px' }}>
-              Add Entry
-            </button>
+            <FormSelect name="category" id="category-select" label="Category">
+              {CATEGORIES.map(c => <option key={c} value={c} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c}</option>)}
+            </FormSelect>
+            <Button type="submit" className="w-full">Add Entry</Button>
           </form>
         </SimpleCard>
 

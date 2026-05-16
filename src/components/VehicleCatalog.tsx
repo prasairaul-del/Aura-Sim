@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Shield, TrendingUp } from 'lucide-react'
+import { Shield, TrendingUp } from 'lucide-react'
 import { useSimulationStore } from '../store/useSimulationStore'
 import { formatCurrency } from '../lib/utils'
 import { cn } from '../lib/utils'
+import { Button, Modal } from './ui/GlassComponents'
 
 interface VehicleOption {
   model: string
@@ -61,114 +61,67 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
   const canAfford = (vehicle: VehicleOption) => totalBalance >= vehicle.price
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={onClose}
-            aria-hidden="true"
-          />
-          {/* Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            role="dialog"
-            aria-label="Vehicle acquisition catalog"
-          >
-            <div className="bg-card border w-full max-w-4xl max-h-[80vh] overflow-hidden rounded-lg">
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b">
-                <div>
-                  <h2 className="text-xl font-bold">Acquire new asset</h2>
-                  <p className="text-sm text-muted-foreground mt-1">Available balance: {formatCurrency(totalBalance)}</p>
-                </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-muted rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                  aria-label="Close catalog"
-                >
-                  <X className="w-5 h-5 text-muted-foreground" />
-                </button>
-              </div>
+    <Modal isOpen={isOpen} onClose={onClose} title="Acquire new asset" size="lg">
+      <div className="space-y-6">
+        <p className="text-sm text-muted-foreground">Available balance: {formatCurrency(totalBalance)}</p>
 
-              {/* Vehicle Grid */}
-              <div className="p-6 overflow-y-auto max-h-[calc(80vh-140px)]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {VEHICLE_CATALOG.map((vehicle) => (
-                    <button
-                      key={vehicle.model}
-                      onClick={() => setSelectedVehicle(vehicle)}
-                      disabled={!canAfford(vehicle)}
-                      className={cn(
-                        "text-left p-4 rounded-md border transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50",
-                        selectedVehicle?.model === vehicle.model
-                          ? "bg-emerald-100 border-emerald-500"
-                          : "border hover:bg-muted",
-                        !canAfford(vehicle) && "opacity-40 cursor-not-allowed"
-                      )}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-bold">{vehicle.model}</h3>
-                          <p className="text-xs text-muted-foreground capitalize">{vehicle.class}</p>
-                        </div>
-                        <span className={cn(
-                          "font-mono text-sm font-bold",
-                          canAfford(vehicle) ? "text-emerald-600" : "text-red-600"
-                        )}>
-                          {formatCurrency(vehicle.price)}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-3">{vehicle.description}</p>
-                      <div className="flex gap-3 text-[10px] text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Shield className="w-3 h-3" /> Health: {vehicle.baseHealth}%
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <TrendingUp className="w-3 h-3" /> Efficiency: {vehicle.efficiency}%
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Footer / Purchase Button */}
-              {selectedVehicle && (
-                <div className="p-6 border-t bg-muted/50">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Selected:</p>
-                      <p className="font-bold">{selectedVehicle.model}</p>
-                      <p className="font-mono text-emerald-600">{formatCurrency(selectedVehicle.price)}</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => setSelectedVehicle(null)}
-                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={handlePurchase}
-                        disabled={!canAfford(selectedVehicle)}
-                        className="px-6 py-2 bg-emerald-500 text-white rounded-md font-bold text-sm hover:bg-emerald-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                      >
-                        Confirm purchase
-                      </button>
-                    </div>
-                  </div>
-                </div>
+        {/* Vehicle Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[calc(80vh-200px)] overflow-y-auto">
+          {VEHICLE_CATALOG.map((vehicle) => (
+            <button
+              key={vehicle.model}
+              onClick={() => setSelectedVehicle(vehicle)}
+              disabled={!canAfford(vehicle)}
+              className={cn(
+                "text-left p-4 rounded-md border transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50",
+                selectedVehicle?.model === vehicle.model
+                  ? "bg-emerald-100 border-emerald-500"
+                  : "border hover:bg-muted",
+                !canAfford(vehicle) && "opacity-40 cursor-not-allowed"
               )}
+            >
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="font-bold">{vehicle.model}</h3>
+                  <p className="text-xs text-muted-foreground capitalize">{vehicle.class}</p>
+                </div>
+                <span className={cn(
+                  "font-mono text-sm font-bold",
+                  canAfford(vehicle) ? "text-emerald-600" : "text-red-600"
+                )}>
+                  {formatCurrency(vehicle.price)}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">{vehicle.description}</p>
+              <div className="flex gap-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Shield className="w-3 h-3" /> Health: {vehicle.baseHealth}%
+                </span>
+                <span className="flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" /> Efficiency: {vehicle.efficiency}%
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Footer / Purchase Button */}
+        {selectedVehicle && (
+          <div className="pt-4 border-t">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Selected:</p>
+                <p className="font-bold">{selectedVehicle.model}</p>
+                <p className="font-mono text-emerald-600">{formatCurrency(selectedVehicle.price)}</p>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={() => setSelectedVehicle(null)}>Cancel</Button>
+                <Button onClick={handlePurchase} disabled={!canAfford(selectedVehicle)}>Confirm purchase</Button>
+              </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+        )}
+      </div>
+    </Modal>
   )
 }

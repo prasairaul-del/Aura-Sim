@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { SimpleCard } from './ui/GlassComponents'
+import { Button, FormInput, FormSelect, Modal, SectionHeader, SimpleCard, StatCard } from './ui/GlassComponents'
 import { formatCurrency } from '../lib/utils'
 import { Target, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Plus, Trash2, DollarSign } from 'lucide-react'
 
@@ -69,56 +69,37 @@ export const BudgetPlanning: React.FC = () => {
 
   return (
     <div className="space-y-6" id="budget">
-      <div className="flex justify-between items-end">
-        <div>
-          <h3 className="text-2xl font-bold tracking-tight">Budget planning</h3>
-          <p className="text-muted-foreground text-sm">Track planned vs actual spending across categories</p>
-        </div>
-        <button
-          onClick={() => setShowAddBudget(true)}
-          className="px-4 py-2 bg-emerald-500 text-white rounded-md text-sm font-medium hover:bg-emerald-600 transition-colors flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Add budget target
-        </button>
-      </div>
+      <SectionHeader
+        title="Budget planning"
+        description="Track planned vs actual spending across categories"
+        action={
+          <Button onClick={() => setShowAddBudget(true)}>
+            <Plus className="w-4 h-4" />
+            Add budget target
+          </Button>
+        }
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Target className="w-5 h-5 text-emerald-500" />
-            <span className="text-xs text-muted-foreground">Total planned</span>
-          </div>
-          <p className="text-2xl font-bold">{formatCurrency(totalPlanned)}</p>
-          <p className="text-xs text-muted-foreground mt-1">Monthly budget allocation</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="w-5 h-5 text-amber-500" />
-            <span className="text-xs text-muted-foreground">Total actual</span>
-          </div>
-          <p className="text-2xl font-bold">{formatCurrency(totalActual)}</p>
-          <p className="text-xs text-muted-foreground mt-1">Actual spending to date</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            {totalVariance >= 0 ? (
-              <CheckCircle className="w-5 h-5 text-emerald-500" />
-            ) : (
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-            )}
-            <span className="text-xs text-muted-foreground">Variance</span>
-          </div>
-          <p className={`text-2xl font-bold ${totalVariance >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-            {totalVariance >= 0 ? '+' : ''}{formatCurrency(totalVariance)}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {totalVariance >= 0 ? 'Under budget' : 'Over budget'}
-          </p>
-        </SimpleCard>
+        <StatCard
+          icon={<Target className="w-5 h-5 text-emerald-500" />}
+          label="Total planned"
+          value={formatCurrency(totalPlanned)}
+          subtext="Monthly budget allocation"
+        />
+        <StatCard
+          icon={<DollarSign className="w-5 h-5 text-amber-500" />}
+          label="Total actual"
+          value={formatCurrency(totalActual)}
+          subtext="Actual spending to date"
+        />
+        <StatCard
+          icon={totalVariance >= 0 ? <CheckCircle className="w-5 h-5 text-emerald-500" /> : <AlertTriangle className="w-5 h-5 text-red-500" />}
+          label="Variance"
+          value={`${totalVariance >= 0 ? '+' : ''}${formatCurrency(totalVariance)}`}
+          subtext={totalVariance >= 0 ? 'Under budget' : 'Over budget'}
+        />
       </div>
 
       {/* Budget Breakdown Table */}
@@ -226,65 +207,41 @@ export const BudgetPlanning: React.FC = () => {
       </SimpleCard>
 
       {/* Add Budget Modal */}
-      {showAddBudget && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" role="dialog" aria-modal="true">
-          <SimpleCard className="w-full max-w-md">
-            <h4 className="text-lg font-semibold mb-4">Add budget target</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Category</label>
-                <select
-                  value={newBudget.category}
-                  onChange={(e) => setNewBudget({ ...newBudget, category: e.target.value as BudgetCategory })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  <option value="Fleet">Fleet</option>
-                  <option value="Operations">Operations</option>
-                  <option value="Marketing">Marketing</option>
-                  <option value="Staff">Staff</option>
-                  <option value="VIP Services">VIP Services</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Period</label>
-                <select
-                  value={newBudget.period}
-                  onChange={(e) => setNewBudget({ ...newBudget, period: e.target.value as typeof newBudget.period })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                  <option value="yearly">Yearly</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Planned amount ($)</label>
-                <input
-                  type="number"
-                  value={newBudget.plannedAmount || ''}
-                  onChange={(e) => setNewBudget({ ...newBudget, plannedAmount: Number(e.target.value) })}
-                  className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleAddBudget}
-                  className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-md font-medium hover:bg-emerald-600 transition-colors"
-                >
-                  Add budget target
-                </button>
-                <button
-                  onClick={() => setShowAddBudget(false)}
-                  className="px-4 py-2 border rounded-md text-muted-foreground hover:bg-muted transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </SimpleCard>
+      <Modal isOpen={showAddBudget} onClose={() => setShowAddBudget(false)} title="Add budget target" size="sm">
+        <div className="space-y-4">
+          <FormSelect
+            label="Category"
+            value={newBudget.category}
+            onChange={(e) => setNewBudget({ ...newBudget, category: e.target.value as BudgetCategory })}
+          >
+            <option value="Fleet" style={{ backgroundColor: 'var(--app-option-bg)' }}>Fleet</option>
+            <option value="Operations" style={{ backgroundColor: 'var(--app-option-bg)' }}>Operations</option>
+            <option value="Marketing" style={{ backgroundColor: 'var(--app-option-bg)' }}>Marketing</option>
+            <option value="Staff" style={{ backgroundColor: 'var(--app-option-bg)' }}>Staff</option>
+            <option value="VIP Services" style={{ backgroundColor: 'var(--app-option-bg)' }}>VIP Services</option>
+          </FormSelect>
+          <FormSelect
+            label="Period"
+            value={newBudget.period}
+            onChange={(e) => setNewBudget({ ...newBudget, period: e.target.value as typeof newBudget.period })}
+          >
+            <option value="monthly" style={{ backgroundColor: 'var(--app-option-bg)' }}>Monthly</option>
+            <option value="quarterly" style={{ backgroundColor: 'var(--app-option-bg)' }}>Quarterly</option>
+            <option value="yearly" style={{ backgroundColor: 'var(--app-option-bg)' }}>Yearly</option>
+          </FormSelect>
+          <FormInput
+            label="Planned amount ($)"
+            type="number"
+            value={newBudget.plannedAmount || ''}
+            onChange={(e) => setNewBudget({ ...newBudget, plannedAmount: Number(e.target.value) })}
+            placeholder="0.00"
+          />
+          <div className="flex gap-3 pt-2">
+            <Button onClick={handleAddBudget} className="flex-1">Add budget target</Button>
+            <Button variant="secondary" onClick={() => setShowAddBudget(false)}>Cancel</Button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   )
 }

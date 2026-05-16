@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { SimpleCard } from './ui/GlassComponents'
+import { Button, FormInput, FormSelect, Modal, SectionHeader, SimpleCard, StatCard } from './ui/GlassComponents'
 import { formatCurrency } from '../lib/utils'
 import { Users, Calendar, Plus, Trash2, Check, X, Clock, DollarSign, Mail, Phone } from 'lucide-react'
 import type { Customer, Booking } from '../types'
@@ -51,69 +51,31 @@ export const CustomerProfiles: React.FC = () => {
   }
 
   const availableVehicles = fleet.filter(v => v.status === 'available')
-  const inputClass = "w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
 
   return (
     <div className="space-y-6" id="customers">
-      <div className="flex justify-between items-end">
-        <div>
-          <h3 className="text-base font-semibold">Customer Profiles & Bookings</h3>
-          <p style={{ color: 'var(--app-text-muted)' }} className="text-sm mt-1">Manage clients and reservations</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowAddBooking(true)}
-            className="px-3 py-2 bg-gold-500 text-onyx-950 text-xs font-medium hover:bg-gold-400 transition-colors flex items-center gap-2"
-            style={{ borderRadius: '6px' }}
-          >
-            <Calendar className="w-3.5 h-3.5" />
-            New Booking
-          </button>
-          <button
-            onClick={() => setShowAddCustomer(true)}
-            className="px-3 py-2 bg-emerald-500 text-onyx-950 text-xs font-medium hover:bg-emerald-400 transition-colors flex items-center gap-2"
-            style={{ borderRadius: '6px' }}
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Add Customer
-          </button>
-        </div>
-      </div>
+      <SectionHeader
+        title="Customer Profiles & Bookings"
+        description="Manage clients and reservations"
+        action={
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={() => setShowAddBooking(true)} style={{ backgroundColor: 'var(--app-card-bg)', borderColor: 'var(--app-card-border)', color: 'var(--app-text-muted)' }}>
+              <Calendar className="w-3.5 h-3.5" />
+              New Booking
+            </Button>
+            <Button onClick={() => setShowAddCustomer(true)}>
+              <Plus className="w-3.5 h-3.5" />
+              Add Customer
+            </Button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Users className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Total Customers</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{customers.length}</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Calendar className="w-5 h-5 text-gold-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Active Bookings</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{bookings.filter(b => b.status === 'confirmed' || b.status === 'pending').length}</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="w-5 h-5 text-emerald-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Total Revenue</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">{formatCurrency(customers.reduce((sum, c) => sum + c.totalSpent, 0))}</p>
-        </SimpleCard>
-
-        <SimpleCard>
-          <div className="flex items-center justify-between mb-2">
-            <Clock className="w-5 h-5 text-gold-400" />
-            <span className="text-xs" style={{ color: 'var(--app-text-muted)' }}>Avg Bookings/Customer</span>
-          </div>
-          <p className="text-xl font-semibold font-mono">
-            {customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + c.totalBookings, 0) / customers.length) : 0}
-          </p>
-        </SimpleCard>
+        <StatCard icon={<Users className="w-5 h-5 text-emerald-400" />} label="Total Customers" value={customers.length.toString()} />
+        <StatCard icon={<Calendar className="w-5 h-5 text-gold-400" />} label="Active Bookings" value={bookings.filter(b => b.status === 'confirmed' || b.status === 'pending').length.toString()} />
+        <StatCard icon={<DollarSign className="w-5 h-5 text-emerald-400" />} label="Total Revenue" value={formatCurrency(customers.reduce((sum, c) => sum + c.totalSpent, 0))} />
+        <StatCard icon={<Clock className="w-5 h-5 text-gold-400" />} label="Avg Bookings/Customer" value={customers.length > 0 ? Math.round(customers.reduce((sum, c) => sum + c.totalBookings, 0) / customers.length).toString() : '0'} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -228,186 +190,61 @@ export const CustomerProfiles: React.FC = () => {
       </div>
 
       {/* Add Customer Modal */}
-      {showAddCustomer && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-modal="true">
-          <SimpleCard className="w-full max-w-md">
-            <h4 className="text-base font-semibold mb-4">Add New Customer</h4>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Name *</label>
-                <input
-                  type="text"
-                  value={newCustomer.name}
-                  onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  placeholder="Enter customer name"
-                />
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Email *</label>
-                <input
-                  type="email"
-                  value={newCustomer.email}
-                  onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  placeholder="customer@example.com"
-                />
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Phone</label>
-                <input
-                  type="tel"
-                  value={newCustomer.phone}
-                  onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  placeholder="+1-555-0000"
-                />
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Tier</label>
-                <select
-                  value={newCustomer.tier}
-                  onChange={(e) => setNewCustomer({ ...newCustomer, tier: e.target.value as Customer['tier'] })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                >
-                  <option value="standard" style={{ backgroundColor: 'var(--app-option-bg)' }}>Standard</option>
-                  <option value="gold" style={{ backgroundColor: 'var(--app-option-bg)' }}>Gold</option>
-                  <option value="platinum" style={{ backgroundColor: 'var(--app-option-bg)' }}>Platinum</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleAddCustomer}
-                  className="flex-1 px-4 py-2 bg-emerald-500 text-onyx-950 text-xs font-medium hover:bg-emerald-400 transition-colors"
-                  style={{ borderRadius: '6px' }}
-                >
-                  Add Customer
-                </button>
-                <button
-                  onClick={() => setShowAddCustomer(false)}
-                  className="px-4 py-2 border text-xs hover:bg-gray-700 transition-colors"
-                  style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg)', color: 'var(--app-text-muted)', borderRadius: '6px' }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </SimpleCard>
+      <Modal isOpen={showAddCustomer} onClose={() => setShowAddCustomer(false)} title="Add New Customer" size="sm">
+        <div className="space-y-3">
+          <FormInput label="Name *" value={newCustomer.name} onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })} placeholder="Enter customer name" />
+          <FormInput label="Email *" type="email" value={newCustomer.email} onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })} placeholder="customer@example.com" />
+          <FormInput label="Phone" type="tel" value={newCustomer.phone} onChange={(e) => setNewCustomer({ ...newCustomer, phone: e.target.value })} placeholder="+1-555-0000" />
+          <FormSelect label="Tier" value={newCustomer.tier} onChange={(e) => setNewCustomer({ ...newCustomer, tier: e.target.value as Customer['tier'] })}>
+            <option value="standard" style={{ backgroundColor: 'var(--app-option-bg)' }}>Standard</option>
+            <option value="gold" style={{ backgroundColor: 'var(--app-option-bg)' }}>Gold</option>
+            <option value="platinum" style={{ backgroundColor: 'var(--app-option-bg)' }}>Platinum</option>
+          </FormSelect>
+          <div className="flex gap-3 pt-2">
+            <Button onClick={handleAddCustomer} className="flex-1">Add Customer</Button>
+            <Button variant="secondary" onClick={() => setShowAddCustomer(false)}>Cancel</Button>
+          </div>
         </div>
-      )}
+      </Modal>
 
       {/* Add Booking Modal */}
-      {showAddBooking && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" role="dialog" aria-modal="true">
-          <SimpleCard className="w-full max-w-md">
-            <h4 className="text-base font-semibold mb-4">Create New Booking</h4>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Customer *</label>
-                <select
-                  value={newBooking.customerId}
-                  onChange={(e) => setNewBooking({ ...newBooking, customerId: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                >
-                  <option value="" style={{ backgroundColor: 'var(--app-option-bg)' }}>Select customer</option>
-                  {customers.map(c => (
-                    <option key={c.id} value={c.id} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c.name} ({c.tier})</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Vehicle *</label>
-                <select
-                  value={newBooking.vehicleId}
-                  onChange={(e) => setNewBooking({ ...newBooking, vehicleId: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                >
-                  <option value="" style={{ backgroundColor: 'var(--app-option-bg)' }}>Select vehicle</option>
-                  {availableVehicles.map(v => (
-                    <option key={v.id} value={v.id} style={{ backgroundColor: 'var(--app-option-bg)' }}>{v.model}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Date *</label>
-                <input
-                  type="date"
-                  value={newBooking.date}
-                  onChange={(e) => setNewBooking({ ...newBooking, date: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Start Time</label>
-                  <input
-                    type="time"
-                    value={newBooking.startTime}
-                    onChange={(e) => setNewBooking({ ...newBooking, startTime: e.target.value })}
-                    className={`${inputClass} bg-white/5`}
-                    style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>End Time</label>
-                  <input
-                    type="time"
-                    value={newBooking.endTime}
-                    onChange={(e) => setNewBooking({ ...newBooking, endTime: e.target.value })}
-                    className={`${inputClass} bg-white/5`}
-                    style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Amount ($)</label>
-                <input
-                  type="number"
-                  value={newBooking.amount || ''}
-                  onChange={(e) => setNewBooking({ ...newBooking, amount: Number(e.target.value) })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  placeholder="0.00"
-                />
-              </div>
-              <div>
-                <label className="block text-xs mb-1" style={{ color: 'var(--app-text-muted)' }}>Notes</label>
-                <textarea
-                  value={newBooking.notes}
-                  onChange={(e) => setNewBooking({ ...newBooking, notes: e.target.value })}
-                  className={`${inputClass} bg-white/5`}
-                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
-                  rows={2}
-                  placeholder="Optional booking notes..."
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleAddBooking}
-                  className="flex-1 px-4 py-2 bg-gold-500 text-onyx-950 text-xs font-medium hover:bg-gold-400 transition-colors"
-                  style={{ borderRadius: '6px' }}
-                >
-                  Create Booking
-                </button>
-                <button
-                  onClick={() => setShowAddBooking(false)}
-                  className="px-4 py-2 border text-xs hover:bg-gray-700 transition-colors"
-                  style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg)', color: 'var(--app-text-muted)', borderRadius: '6px' }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </SimpleCard>
+      <Modal isOpen={showAddBooking} onClose={() => setShowAddBooking(false)} title="Create New Booking" size="sm">
+        <div className="space-y-3">
+          <FormSelect label="Customer *" value={newBooking.customerId} onChange={(e) => setNewBooking({ ...newBooking, customerId: e.target.value })}>
+            <option value="" style={{ backgroundColor: 'var(--app-option-bg)' }}>Select customer</option>
+            {customers.map(c => (
+              <option key={c.id} value={c.id} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c.name} ({c.tier})</option>
+            ))}
+          </FormSelect>
+          <FormSelect label="Vehicle *" value={newBooking.vehicleId} onChange={(e) => setNewBooking({ ...newBooking, vehicleId: e.target.value })}>
+            <option value="" style={{ backgroundColor: 'var(--app-option-bg)' }}>Select vehicle</option>
+            {availableVehicles.map(v => (
+              <option key={v.id} value={v.id} style={{ backgroundColor: 'var(--app-option-bg)' }}>{v.model}</option>
+            ))}
+          </FormSelect>
+          <FormInput label="Date *" type="date" value={newBooking.date} onChange={(e) => setNewBooking({ ...newBooking, date: e.target.value })} />
+          <div className="grid grid-cols-2 gap-3">
+            <FormInput label="Start Time" type="time" value={newBooking.startTime} onChange={(e) => setNewBooking({ ...newBooking, startTime: e.target.value })} />
+            <FormInput label="End Time" type="time" value={newBooking.endTime} onChange={(e) => setNewBooking({ ...newBooking, endTime: e.target.value })} />
+          </div>
+          <FormInput label="Amount ($)" type="number" value={newBooking.amount || ''} onChange={(e) => setNewBooking({ ...newBooking, amount: Number(e.target.value) })} placeholder="0.00" />
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-muted-foreground">Notes</label>
+            <textarea
+              value={newBooking.notes}
+              onChange={(e) => setNewBooking({ ...newBooking, notes: e.target.value })}
+              className="w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+              style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
+              rows={2}
+              placeholder="Optional booking notes..."
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <Button onClick={handleAddBooking} className="flex-1">Create Booking</Button>
+            <Button variant="secondary" onClick={() => setShowAddBooking(false)}>Cancel</Button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   )
 }

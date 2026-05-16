@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
-import { SimpleCard, StatusBadge } from '../../components/ui/GlassComponents'
+import { Button, SectionHeader, SimpleCard, StatusBadge } from '../../components/ui/GlassComponents'
 import { Car, DollarSign, Wrench, Trash2 } from 'lucide-react'
 import { formatCurrency, cn } from '../../lib/utils'
 import { VehicleCatalog } from '../../components/VehicleCatalog'
@@ -20,22 +20,16 @@ export const FleetModule: React.FC = () => {
 
   return (
     <div className="space-y-6" id="fleet">
-      <div className="flex justify-between items-end">
-        <div>
-          <h3 className="text-base font-semibold">Luxury Fleet</h3>
-          <p style={{ color: 'var(--app-text-muted)' }} className="text-sm mt-1">Real-time status of your high-end assets</p>
-        </div>
-        <div className="flex gap-2">
-          <CSVImport />
-          <button
-            onClick={() => setIsCatalogOpen(true)}
-            className="px-4 py-2 bg-emerald-500 text-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50 hover:bg-emerald-600 transition-colors"
-            style={{ borderRadius: '6px' }}
-          >
-            Acquire new asset
-          </button>
-        </div>
-      </div>
+      <SectionHeader
+        title="Luxury Fleet"
+        description="Real-time status of your high-end assets"
+        action={
+          <div className="flex gap-2">
+            <CSVImport />
+            <Button onClick={() => setIsCatalogOpen(true)}>Acquire new asset</Button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {fleet.map((vehicle) => (
@@ -96,25 +90,25 @@ export const FleetModule: React.FC = () => {
               </div>
 
               {vehicle.status === 'available' && (
-                <button
+                <Button
+                  variant="secondary"
                   onClick={() => scheduleService(vehicle.id)}
-                  className="w-full mt-2 py-2 border text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                  style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg)', borderRadius: '6px', color: 'var(--app-text-muted)' }}
+                  className="w-full mt-2"
                   aria-label={`Schedule maintenance for ${vehicle.model}`}
                 >
                   Schedule Service
-                </button>
+                </Button>
               )}
 
-              <button
+              <Button
+                variant="danger"
                 onClick={() => handleSellVehicle(vehicle)}
-                className="w-full mt-2 py-2 border text-xs font-medium transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg)', borderRadius: '6px', color: 'var(--app-text-muted)' }}
+                className="w-full mt-2 flex items-center justify-center gap-2"
                 aria-label={`Sell ${vehicle.model}`}
               >
                 <Trash2 className="w-3 h-3" />
                 Sell Vehicle
-              </button>
+              </Button>
             </div>
           </SimpleCard>
         ))}
