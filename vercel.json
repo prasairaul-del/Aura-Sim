@@ -1,0 +1,7 @@
+{
+  "name": "aura-sim-theater",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}
