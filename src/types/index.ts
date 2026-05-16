@@ -14,6 +14,7 @@ export interface Vehicle {
   health: number; // 0-100
   lastService: string;
   revenueGenerated: number;
+  totalServiceHours: number;
 }
 
 export interface SimulationState {

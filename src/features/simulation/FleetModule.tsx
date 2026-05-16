@@ -1,21 +1,22 @@
 import React from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
 import { GlassCard, StatusBadge } from '../../components/ui/GlassComponents'
-import { Car, DollarSign, Activity } from 'lucide-react'
+import { Car, DollarSign, Activity, Wrench } from 'lucide-react'
 import { formatCurrency, cn } from '../../lib/utils'
 import { motion } from 'framer-motion'
 
 export const FleetModule: React.FC = () => {
   const fleet = useSimulationStore((state) => state.fleet)
+  const scheduleService = useSimulationStore((state) => state.scheduleService)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="fleet">
       <div className="flex justify-between items-end">
         <div>
           <h3 className="text-2xl font-bold tracking-tight">Luxury Fleet</h3>
-          <p className="text-white/40 text-sm">Real-time status of your high-end assets</p>
+          <p className="text-white/60 text-sm">Real-time status of your high-end assets</p>
         </div>
-        <button className="px-6 py-2 bg-emerald-500 text-onyx-950 rounded-full font-bold text-xs interactive-button shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+        <button className="px-6 py-2 bg-emerald-500 text-onyx-950 rounded-full font-bold text-xs interactive-button shadow-[0_0_20px_rgba(16,185,129,0.3)] focus:outline-none focus:ring-2 focus:ring-emerald-500/50">
           ACQUIRE NEW ASSET
         </button>
       </div>
@@ -27,45 +28,62 @@ export const FleetModule: React.FC = () => {
               <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                 <Car className="w-6 h-6 text-emerald-400" />
               </div>
-              <StatusBadge status={vehicle.status} />
+              <StatusBadge status={vehicle.status} health={Math.round(vehicle.health)} />
             </div>
 
             <h4 className="text-lg font-bold mb-1">{vehicle.model}</h4>
-            <p className="text-white/40 text-xs mb-6 uppercase tracking-widest">ID: {vehicle.id.toUpperCase()}</p>
+            <p className="text-white/50 text-xs mb-6 uppercase tracking-widest">ID: {vehicle.id.toUpperCase()}</p>
 
             <div className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] uppercase tracking-tighter text-white/60">
                   <span>Structural Integrity</span>
-                  <span>{Math.round(vehicle.health)}%</span>
+                  <span aria-label={`${Math.round(vehicle.health)} percent health`}>{Math.round(vehicle.health)}%</span>
                 </div>
-                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
+                <div className="h-1 bg-white/5 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(vehicle.health)} aria-valuemin={0} aria-valuemax={100} aria-label="Vehicle health">
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${vehicle.health}%` }}
                     className={cn(
                       "h-full rounded-full transition-all duration-1000",
-                      vehicle.health > 70 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : 
+                      vehicle.health > 70 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" :
                       vehicle.health > 30 ? "bg-gold-500 shadow-[0_0_10px_rgba(212,175,55,0.5)]" : "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
                     )}
                   />
                 </div>
               </div>
 
+              <div className="flex items-center gap-1 text-[10px] text-white/40 uppercase tracking-tighter">
+                <Wrench className="w-3 h-3" />
+                <span>Last serviced: {vehicle.lastService}</span>
+                <span className="text-white/25 mx-1">&bull;</span>
+                <span>{(vehicle.totalServiceHours || 0).toFixed(1)}h total</span>
+              </div>
+
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
                 <div>
-                  <div className="flex items-center gap-1 text-[10px] text-white/40 uppercase mb-1">
+                  <div className="flex items-center gap-1 text-[10px] text-white/50 uppercase mb-1">
                     <DollarSign className="w-3 h-3" /> Revenue
                   </div>
                   <p className="font-mono text-sm">{formatCurrency(vehicle.revenueGenerated)}</p>
                 </div>
                 <div>
-                  <div className="flex items-center gap-1 text-[10px] text-white/40 uppercase mb-1">
+                  <div className="flex items-center gap-1 text-[10px] text-white/50 uppercase mb-1">
                     <Activity className="w-3 h-3" /> Efficiency
                   </div>
                   <p className="font-mono text-sm">{vehicle.status === 'in-service' ? '94%' : '0%'}</p>
                 </div>
               </div>
+
+              {vehicle.status === 'available' && (
+                <button
+                  onClick={() => scheduleService(vehicle.id)}
+                  className="w-full mt-2 py-2 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-widest text-white/50 hover:bg-white/10 hover:text-white/70 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  aria-label={`Schedule maintenance for ${vehicle.model}`}
+                >
+                  Schedule Service
+                </button>
+              )}
             </div>
           </GlassCard>
         ))}
