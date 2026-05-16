@@ -26,7 +26,7 @@ export function DashboardPage() {
         if (profile) {
           setActiveScenario(profile)
         }
-      } catch (e) {
+      } catch {
         // Ignore errors
       }
     }

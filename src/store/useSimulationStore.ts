@@ -1,6 +1,21 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { SimulationState, Vehicle, Transaction, Customer, Booking } from '../types'
+
+interface SimulationProfile {
+  id: string
+  fleetSize: number
+  initialBalance: number
+  customVehicles?: CustomVehicleData[]
+}
+
+interface CustomVehicleData {
+  model: string
+  purchaseDate: string
+  currentValuation: number
+  health?: number
+  status?: string
+}
 import {
   HEALTH_DECAY_MAX,
   REVENUE_MIN,
@@ -15,8 +30,16 @@ import {
   MAX_TRANSACTIONS,
 } from '../lib/simConfig'
 
+interface CustomVehicleData {
+  model: string
+  purchaseDate: string
+  currentValuation: number
+  health?: number
+  status?: string
+}
+
 // Helper to get initial fleet based on active scenario
-const getInitialFleet = (fleetSize: number, customVehicles?: any[]): Vehicle[] => {
+const getInitialFleet = (fleetSize: number, customVehicles?: CustomVehicleData[]): Vehicle[] => {
   // If custom vehicles are provided, use them
   if (customVehicles && customVehicles.length > 0) {
     return customVehicles.map((v, i) => ({
@@ -61,7 +84,7 @@ const getActiveScenario = () => {
   try {
     const activeId = localStorage.getItem('aura-active-profile') || 'default'
     const profiles = JSON.parse(localStorage.getItem('aura-simulation-profiles') || '[]')
-    const profile = profiles.find((p: any) => p.id === activeId)
+    const profile = profiles.find((p: SimulationProfile & { customVehicles?: CustomVehicleData[] }) => p.id === activeId)
     
     if (profile) {
       return {
@@ -70,7 +93,7 @@ const getActiveScenario = () => {
         customVehicles: profile.customVehicles,
       }
     }
-  } catch (e) {
+  } catch {
     // Fallback to default
   }
   
@@ -89,7 +112,7 @@ interface SimulationActions {
   toggleSimulation: () => void
   tick: () => void
   scheduleService: (id: string) => void
-  resetSimulation: (fleetSize: number, initialBalance: number, customVehicles?: any[]) => void
+  resetSimulation: (fleetSize: number, initialBalance: number, customVehicles?: CustomVehicleData[]) => void
   // Customer management
   addCustomer: (customer: Omit<Customer, 'id' | 'totalBookings' | 'totalSpent' | 'createdAt'>) => void
   updateCustomer: (id: string, updates: Partial<Customer>) => void
