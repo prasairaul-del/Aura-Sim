@@ -12,6 +12,29 @@ export const FinancialLedger: React.FC = () => {
 
   const categories = ["Fleet", "Operations", "Marketing", "Staff", "VIP Services"] as const
 
+  const handleOCRResult = (result: string) => {
+    // Parse the OCR result and auto-populate a transaction
+    const totalMatch = result.match(/Total:\s*\$?([\d,]+\.?\d*)/)
+    const vendorMatch = result.match(/Vendor:\s*(.+)/)
+    const categoryMatch = result.match(/Category:\s*(.+)/)
+
+    if (totalMatch) {
+      const amount = parseFloat(totalMatch[1].replace(/,/g, ''))
+      const merchant = vendorMatch ? vendorMatch[1].trim() : 'OCR Scanned Receipt'
+      const rawCategory = categoryMatch ? categoryMatch[1].trim() : 'Operations'
+      const category = categories.includes(rawCategory as typeof categories[number])
+        ? (rawCategory as typeof categories[number])
+        : 'Operations'
+
+      addTransaction({
+        merchant,
+        category,
+        amount,
+        type: 'expense'
+      })
+    }
+  }
+
   const handleManualEntry = (e: React.FormEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
@@ -33,7 +56,7 @@ export const FinancialLedger: React.FC = () => {
         </div>
       </div>
 
-      <OCRDropzone />
+      <OCRDropzone onAnalysisComplete={handleOCRResult} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Entry Form */}

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { SimulationState, Vehicle, Transaction } from '../types'
 
 interface SimulationActions {
@@ -9,7 +10,7 @@ interface SimulationActions {
   tick: () => void
 }
 
-export const useSimulationStore = create<SimulationState & SimulationActions>((set, get) => ({
+export const useSimulationStore = create(persist<SimulationState & SimulationActions>((set, get) => ({
   fleet: [
     { id: '1', model: 'Rolls-Royce Ghost', status: 'available', health: 100, lastService: '2024-05-01', revenueGenerated: 50000 },
     { id: '2', model: 'Bentley Flying Spur', status: 'in-service', health: 92, lastService: '2024-04-15', revenueGenerated: 35000 },
@@ -99,4 +100,4 @@ export const useSimulationStore = create<SimulationState & SimulationActions>((s
       totalBalance: state.totalBalance + (newTransactions[0]?.type === 'income' ? newTransactions[0].amount : 0) - (newTransactions[0]?.type === 'expense' ? newTransactions[0].amount : 0)
     })
   }
-}))
+}), { name: 'aura-sim-storage' }))

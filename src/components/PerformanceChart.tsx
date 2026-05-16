@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { GlassCard } from './ui/GlassComponents'
 import { useSimulationStore } from '../store/useSimulationStore'
@@ -10,46 +10,39 @@ interface ChartDataPoint {
 
 export const PerformanceChart: React.FC = () => {
   const { transactions, totalBalance } = useSimulationStore()
-  const [data, setData] = useState<ChartDataPoint[]>([])
 
-  // Generate chart data from transaction history
-  useEffect(() => {
+  // Generate chart data from transaction history — memoized to prevent recalculation on unrelated re-renders
+  const data = useMemo<ChartDataPoint[]>(() => {
     if (transactions.length === 0) {
-      // Show initial balance as baseline
-      setData([{ name: 'Start', value: Math.round(totalBalance / 1000) }])
-      return
+      return [{ name: 'Start', value: Math.round(totalBalance / 1000) }]
     }
 
-    // Create a running balance chart from transactions
     const sortedTransactions = [...transactions].reverse()
     let runningBalance = totalBalance
-    
+
     const chartPoints: ChartDataPoint[] = sortedTransactions.map((t) => {
       const date = new Date(t.date)
-      const timeLabel = date.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
+      const timeLabel = date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
         minute: '2-digit',
-        hour12: false 
+        hour12: false
       })
-      
-      // Calculate running balance at this point
+
       const adjustment = t.type === 'income' ? -t.amount : t.amount
       runningBalance += adjustment
-      
+
       return {
         name: timeLabel,
         value: Math.round(runningBalance / 1000)
       }
     })
 
-    // Add current state as last point
     chartPoints.push({
       name: 'Now',
       value: Math.round(totalBalance / 1000)
     })
 
-    // Keep only last 24 data points for readability
-    setData(chartPoints.slice(-24))
+    return chartPoints.slice(-24)
   }, [transactions, totalBalance])
 
   return (
