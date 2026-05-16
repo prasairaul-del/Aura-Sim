@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Link, useLocation, Outlet } from "react-router-dom"
 import { AlertPanel } from "./AlertPanel"
 import { Sun, Moon, Menu, X } from "lucide-react"
+import { cn } from "../lib/utils"
 
-interface LayoutProps {
-  children: React.ReactNode
-}
-
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC = () => {
   const [darkMode, setDarkMode] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const location = useLocation()
 
   // Close mobile menu on Escape key
   useEffect(() => {
@@ -23,14 +22,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [mobileMenuOpen])
 
   const navLinks = [
-    { href: '#dashboard', label: 'DASHBOARD' },
-    { href: '#fleet', label: 'FLEET' },
-    { href: '#ledger', label: 'LEDGER' },
-    { href: '#analytics', label: 'ANALYTICS' },
-    { href: '#customers', label: 'CUSTOMERS' },
-    { href: '#budget', label: 'BUDGET' },
-    { href: '#staff', label: 'STAFF' },
-    { href: '#coo', label: 'VIRTUAL COO' },
+    { path: '/dashboard', label: 'DASHBOARD' },
+    { path: '/fleet', label: 'FLEET' },
+    { path: '/ledger', label: 'LEDGER' },
+    { path: '/analytics', label: 'ANALYTICS' },
+    { path: '/customers', label: 'CUSTOMERS' },
+    { path: '/budget', label: 'BUDGET' },
+    { path: '/staff', label: 'STAFF' },
+    { path: '/coo', label: 'VIRTUAL COO' },
   ]
 
   return (
@@ -58,16 +57,23 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <h1 className="text-lg sm:text-xl font-bold tracking-tighter uppercase gold-text-glow">Aura-Sim</h1>
         </div>
-        
+
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-8 text-sm font-medium text-white/60">
           {navLinks.map(link => (
-            <a key={link.href} href={link.href} className="hover:text-emerald-400 transition-colors">
+            <Link
+              key={link.path}
+              to={link.path}
+              className={cn(
+                "hover:text-emerald-400 transition-colors",
+                location.pathname === link.path && "text-emerald-400 font-bold"
+              )}
+            >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
-        
+
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -79,7 +85,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="hidden sm:block">
             <AlertPanel />
           </div>
-          
+
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -104,14 +110,17 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           >
             <div className="flex flex-col p-4 space-y-2">
               {navLinks.map(link => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="px-4 py-3 text-sm font-medium text-white/60 hover:text-emerald-400 hover:bg-white/5 rounded-lg transition-all"
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={cn(
+                    "px-4 py-3 text-sm font-medium text-white/60 hover:text-emerald-400 hover:bg-white/5 rounded-lg transition-all",
+                    location.pathname === link.path && "text-emerald-400 font-bold bg-white/5"
+                  )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="pt-2 border-t border-white/10">
                 <AlertPanel />
@@ -127,7 +136,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          {children}
+          <Outlet />
         </motion.div>
       </main>
     </div>

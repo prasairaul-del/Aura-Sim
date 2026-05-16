@@ -1,6 +1,6 @@
 # Aura-Sim | Financial Theater
 
-A highly stylized, cinematic financial simulator for luxury fleet management. Aura-Sim bridges the gap between aesthetic immersion and complex logic, featuring real-time simulation, OCR-driven data entry, and AI-powered strategic analysis.
+A highly stylized, cinematic financial simulator for luxury fleet management. Aura-Sim bridges the gap between aesthetic immersion and complex logic, featuring real-time simulation, OCR-driven data entry, AI-powered strategic analysis, and comprehensive business management tools.
 
 ## 🎭 The "Theater" Experience
 - **Cyber-Luxury Aesthetic:** Deep emerald, gold, and onyx palette with Glassmorphism 2.0 effects.
@@ -9,14 +9,40 @@ A highly stylized, cinematic financial simulator for luxury fleet management. Au
 - **OCR Neural Dropzone:** Drag and drop receipts to instantly update the ledger using client-side Tesseract.js.
 - **Real-time Engine:** Dynamic "Fleet Health" and "Yield Velocity" calculations that respond to operational events.
 
+## ✨ Features
+
+### Core Simulation
+- **Luxury Fleet Management:** Track Rolls-Royce, Bentley, Maybach vehicles with health monitoring
+- **Financial Ledger:** Real-time income/expense tracking with multi-currency support (USD, EUR, GBP, JPY, AED)
+- **Vehicle Acquisition:** Browse and purchase from an integrated vehicle catalog
+- **Maintenance Tracking:** Per-vehicle maintenance cost tracking and service scheduling
+- **Vehicle Decommissioning:** Sell assets with automatic resale value calculation
+
+### Business Intelligence
+- **Advanced Analytics Dashboard:** Revenue charts, fleet status distribution, transaction trends, maintenance costs
+- **Budget Planning:** Set budget targets by category with planned vs actual variance tracking
+- **Customer Profiles & Bookings:** VIP customer directory with tier system and reservation calendar
+- **Staff Management:** Hire/fire employees, track salaries, monitor performance ratings by department
+- **Scenario Manager:** Create and switch between multiple simulation profiles with different configurations
+
+### User Experience
+- **Client-Side Routing:** Fast page transitions with React Router v6 - each section has its own URL
+- **Keyboard Shortcuts:** Power user shortcuts for quick navigation (Space, ?, g+d, g+f, etc.)
+- **Configurable Alerts:** Customizable thresholds for vehicle health and balance warnings
+- **CSV Import:** Drag-and-drop import for vehicles and transactions with template downloads
+- **First-Time Onboarding:** Interactive tutorial for new users
+- **Confirmation Dialogs:** Safety checks for destructive actions
+- **Mobile Responsive:** Hamburger menu and touch-optimized interface
+- **Accessibility:** ARIA labels, keyboard navigation, focus management, screen reader support
+
 ## 🛠️ Tech Stack
 - **Frontend:** React 18, Vite, TypeScript
 - **Styling:** Tailwind CSS, Framer Motion
-- **State:** Zustand (Simulation Machine)
+- **State:** Zustand (Simulation Machine with localStorage persistence)
 - **Intelligence:** Google Gemini AI SDK
-- **OCR:** Tesseract.js
 - **Charts:** Recharts (Customized Luxury Theme)
-- **Testing:** Playwright (E2E)
+- **Testing:** Vitest (Unit), Playwright (E2E)
+- **Backend:** Express.js proxy server for API key protection
 
 ## 🚀 Getting Started
 
@@ -47,9 +73,10 @@ A highly stylized, cinematic financial simulator for luxury fleet management. Au
 **Note:** The backend proxy protects your API keys by keeping them server-side. For development only, you can still use `VITE_GEMINI_API_KEY` directly in the frontend, but this is not recommended for production.
 
 ## 🧪 Testing
-Run the Playwright E2E suite:
+Run the test suite:
 ```bash
-npx playwright test
+npm test        # Unit tests with Vitest
+npx playwright test  # E2E tests
 ```
 
 ## 📜 Deployment
