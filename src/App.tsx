@@ -8,6 +8,7 @@ import { CustomerProfiles } from './components/CustomerProfiles'
 import { BudgetPlanning } from './components/BudgetPlanning'
 import { StaffManagement } from './components/StaffManagement'
 import { KeyboardShortcuts } from './components/KeyboardShortcuts'
+import { AlertSettings } from './components/AlertSettings'
 import { OnboardingTutorial } from './components/OnboardingTutorial'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
@@ -107,6 +108,7 @@ function App() {
     </Layout>
     <OnboardingTutorial onComplete={() => {}} />
     <KeyboardShortcuts />
+    <AlertSettings />
   </>
   )
 }

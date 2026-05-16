@@ -3,8 +3,25 @@
  * Tracks and displays alerts for low vehicle health, negative balance, etc.
  */
 import { create } from 'zustand'
-import { LOW_HEALTH_THRESHOLD, CRITICAL_HEALTH_THRESHOLD, NEGATIVE_BALANCE_THRESHOLD } from './simConfig'
 import type { Vehicle } from '../types'
+
+// Load thresholds from localStorage or use defaults
+const getThresholds = () => {
+  const saved = localStorage.getItem('aura-alert-thresholds')
+  if (saved) {
+    try {
+      return JSON.parse(saved)
+    } catch {
+      // Fallback to defaults
+    }
+  }
+  return {
+    lowHealthThreshold: 30,
+    criticalHealthThreshold: 10,
+    negativeBalanceThreshold: 0,
+    lowBalancePercentage: 10,
+  }
+}
 
 export interface Alert {
   id: string
@@ -56,11 +73,13 @@ export function checkSimulationAlerts(
   totalBalance: number,
   existingAlerts: Alert[]
 ): Omit<Alert, 'id' | 'timestamp' | 'acknowledged'>[] {
+  const thresholds = getThresholds()
+  const INITIAL_BALANCE = 1250000
   const newAlerts: Omit<Alert, 'id' | 'timestamp' | 'acknowledged'>[] = []
 
   // Check each vehicle's health
   for (const vehicle of fleet) {
-    if (vehicle.health <= CRITICAL_HEALTH_THRESHOLD && vehicle.health > 0) {
+    if (vehicle.health <= thresholds.criticalHealthThreshold && vehicle.health > 0) {
       const existing = existingAlerts.find(a =>
         a.message.includes(vehicle.model) && a.message.toLowerCase().includes('critical')
       )
@@ -70,7 +89,7 @@ export function checkSimulationAlerts(
           message: `CRITICAL: ${vehicle.model} health at ${Math.round(vehicle.health)}% — immediate maintenance required`,
         })
       }
-    } else if (vehicle.health <= LOW_HEALTH_THRESHOLD && vehicle.health > CRITICAL_HEALTH_THRESHOLD) {
+    } else if (vehicle.health <= thresholds.lowHealthThreshold && vehicle.health > thresholds.criticalHealthThreshold) {
       const existing = existingAlerts.find(a =>
         a.message.includes(vehicle.model) && a.message.toLowerCase().includes('low')
       )
@@ -84,7 +103,7 @@ export function checkSimulationAlerts(
   }
 
   // Check for negative balance
-  if (totalBalance < NEGATIVE_BALANCE_THRESHOLD) {
+  if (totalBalance < thresholds.negativeBalanceThreshold) {
     const existing = existingAlerts.find(a => a.message.toLowerCase().includes('balance is negative'))
     if (!existing) {
       newAlerts.push({
@@ -94,8 +113,9 @@ export function checkSimulationAlerts(
     }
   }
 
-  // Check for very low balance (10% of initial)
-  if (totalBalance < 125000 && totalBalance >= NEGATIVE_BALANCE_THRESHOLD) {
+  // Check for very low balance (percentage of initial)
+  const lowBalanceThreshold = INITIAL_BALANCE * (thresholds.lowBalancePercentage / 100)
+  if (totalBalance < lowBalanceThreshold && totalBalance >= thresholds.negativeBalanceThreshold) {
     const existing = existingAlerts.find(a => a.message.toLowerCase().includes('low balance'))
     if (!existing) {
       newAlerts.push({
