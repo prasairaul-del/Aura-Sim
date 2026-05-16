@@ -3,6 +3,7 @@ import { FleetModule } from './features/simulation/FleetModule'
 import { FinancialLedger } from './features/finance/FinancialLedger'
 import { VirtualCOO } from './features/ai/VirtualCOO'
 import { PerformanceChart } from './components/PerformanceChart'
+import { OnboardingTutorial } from './components/OnboardingTutorial'
 import { useSimulationStore } from './store/useSimulationStore'
 import { useEffect, useState } from 'react'
 import { cn, AVAILABLE_CURRENCIES, formatCurrencyFromUSD } from './lib/utils'
@@ -22,8 +23,9 @@ function App() {
   }, [tick])
 
   return (
-    <Layout>
-      <div className="grid grid-cols-12 gap-8">
+    <>
+      <Layout>
+        <div className="grid grid-cols-12 gap-8">
         {/* Top KPI Bar */}
         <div className="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="dashboard">
           {[
@@ -94,6 +96,8 @@ function App() {
         </div>
       </div>
     </Layout>
+    <OnboardingTutorial onComplete={() => {}} />
+  </>
   )
 }
 
