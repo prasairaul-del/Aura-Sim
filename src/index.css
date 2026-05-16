@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #050505;
+  --color-background: #0a0a0a;
   --color-foreground: #fafafa;
 
   --color-emerald-950: #022c22;
@@ -21,22 +21,22 @@
 }
 
 :root {
-  --app-bg: #050505;
-  --app-text: #fafafa;
-  --app-text-muted: rgba(255, 255, 255, 0.6);
-  --app-text-faint: rgba(255, 255, 255, 0.4);
-  --app-card-bg: rgba(255, 255, 255, 0.05);
-  --app-card-bg-hover: rgba(255, 255, 255, 0.08);
-  --app-card-border: rgba(255, 255, 255, 0.1);
-  --app-nav-text: rgba(255, 255, 255, 0.6);
-  --app-input-bg: rgba(255, 255, 255, 0.05);
-  --app-input-border: rgba(255, 255, 255, 0.1);
-  --app-input-text: rgba(255, 255, 255, 0.7);
-  --app-option-bg: #0a0a0a;
+  --app-bg: #0a0a0a;
+  --app-text: #e5e5e5;
+  --app-text-muted: #a3a3a3;
+  --app-text-faint: #737373;
+  --app-card-bg: #141414;
+  --app-card-bg-hover: #1a1a1a;
+  --app-card-border: #262626;
+  --app-nav-text: #a3a3a3;
+  --app-input-bg: #141414;
+  --app-input-border: #262626;
+  --app-input-text: #e5e5e5;
+  --app-option-bg: #141414;
   --app-overlay-bg: rgba(10, 10, 10, 0.95);
-  --app-border-light: rgba(255, 255, 255, 0.05);
-  --app-scroll-thumb: rgba(255, 255, 255, 0.1);
-  --app-scroll-thumb-hover: rgba(255, 255, 255, 0.2);
+  --app-border-light: #262626;
+  --app-scroll-thumb: #262626;
+  --app-scroll-thumb-hover: #404040;
   --app-moon-icon: #d4af37;
   --app-moon-icon-light: #333;
 }
@@ -73,32 +73,6 @@ body::selection {
   background-color: rgb(212 175 55 / 0.3);
 }
 
-.glass-card {
-  background-color: var(--app-card-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--app-card-border);
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.emerald-text-glow {
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-}
-
-.gold-text-glow {
-  text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-}
-
-.interactive-button {
-  position: relative;
-  overflow: hidden;
-  transition: all 300ms;
-}
-
-.interactive-button:active {
-  transform: scale(0.95);
-}
-
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -107,7 +81,7 @@ body::selection {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--app-scroll-thumb);
-  border-radius: 9999px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--app-scroll-thumb-hover);

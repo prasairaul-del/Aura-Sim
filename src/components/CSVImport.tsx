@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { GlassCard } from './ui/GlassComponents'
+import { SimpleCard } from './ui/GlassComponents'
 import { Upload, CheckCircle, AlertCircle, X, Download } from 'lucide-react'
 import type { Vehicle, Transaction } from '../types'
 
@@ -180,7 +180,7 @@ export const CSVImport: React.FC = () => {
     <>
       <button
         onClick={() => { setShowModal(true); setImportResult(null) }}
-        className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/70 hover:bg-white/10 transition-colors flex items-center gap-2"
+        className="px-4 py-2 border rounded-md text-sm text-muted-foreground hover:bg-muted transition-colors flex items-center gap-2"
       >
         <Upload className="w-4 h-4" />
         Import CSV
@@ -188,20 +188,20 @@ export const CSVImport: React.FC = () => {
 
       {showModal && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
           role="dialog"
           aria-modal="true"
           onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false) }}
         >
-          <GlassCard glowColor="emerald" className="w-full max-w-lg">
+          <SimpleCard className="w-full max-w-lg">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-xl font-bold tracking-tight">Import Data</h3>
-                <p className="text-white/60 text-sm">Upload vehicles or transactions from CSV</p>
+                <h3 className="text-xl font-bold tracking-tight">Import data</h3>
+                <p className="text-muted-foreground text-sm">Upload vehicles or transactions from CSV</p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-muted rounded-md transition-colors"
                 aria-label="Close import dialog"
               >
                 <X className="w-5 h-5" />
@@ -215,18 +215,18 @@ export const CSVImport: React.FC = () => {
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
-                  className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                    isDragging ? 'border-emerald-500 bg-emerald-500/10' : 'border-white/20 hover:border-white/40'
+                  className={`border-2 border-dashed rounded-md p-8 text-center transition-colors ${
+                    isDragging ? 'border-emerald-500 bg-emerald-100' : 'hover:border-muted-foreground'
                   }`}
                 >
-                  <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-emerald-400' : 'text-white/30'}`} />
-                  <p className="text-white/70 mb-2">Drag and drop your CSV file here</p>
-                  <p className="text-white/40 text-sm mb-4">or</p>
+                  <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-emerald-500' : 'text-muted-foreground'}`} />
+                  <p className="text-muted-foreground mb-2">Drag and drop your CSV file here</p>
+                  <p className="text-muted-foreground text-sm mb-4">or</p>
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-2 bg-emerald-500 text-onyx-950 rounded-lg font-medium hover:bg-emerald-400 transition-colors"
+                    className="px-4 py-2 bg-emerald-500 text-white rounded-md font-medium hover:bg-emerald-600 transition-colors"
                   >
-                    Browse Files
+                    Browse files
                   </button>
                   <input
                     ref={fileInputRef}
@@ -238,30 +238,30 @@ export const CSVImport: React.FC = () => {
                 </div>
 
                 {/* Sample Downloads */}
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <p className="text-xs text-white/50 mb-3">Download sample CSV files:</p>
+                <div className="mt-6 pt-6 border-t">
+                  <p className="text-xs text-muted-foreground mb-3">Download sample CSV files:</p>
                   <div className="flex gap-3">
                     <button
                       onClick={downloadSampleVehicles}
-                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white/60 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                      className="flex-1 px-3 py-2 border rounded-md text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-2"
                     >
                       <Download className="w-3 h-3" />
-                      Vehicles Template
+                      Vehicles template
                     </button>
                     <button
                       onClick={downloadSampleTransactions}
-                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs text-white/60 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+                      className="flex-1 px-3 py-2 border rounded-md text-xs text-muted-foreground hover:bg-muted transition-colors flex items-center justify-center gap-2"
                     >
                       <Download className="w-3 h-3" />
-                      Transactions Template
+                      Transactions template
                     </button>
                   </div>
                 </div>
 
                 {/* Format Info */}
-                <div className="mt-4 p-4 bg-white/5 rounded-lg">
-                  <h4 className="text-xs uppercase tracking-widest text-white/50 mb-2">Expected Formats</h4>
-                  <div className="space-y-2 text-[10px] text-white/40 font-mono">
+                <div className="mt-4 p-4 bg-muted/50 rounded-md">
+                  <h4 className="text-xs font-semibold text-muted-foreground mb-2">Expected formats</h4>
+                  <div className="space-y-2 text-[10px] text-muted-foreground font-mono">
                     <p>Vehicles: model, status, health, revenue</p>
                     <p>Transactions: merchant, category, amount, type</p>
                   </div>
@@ -271,11 +271,11 @@ export const CSVImport: React.FC = () => {
               /* Results */
               <div className="space-y-4">
                 {importResult.errors.length === 0 ? (
-                  <div className="flex items-center gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                  <div className="flex items-center gap-3 p-4 bg-emerald-100 border border-emerald-200 rounded-md">
+                    <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-emerald-400 font-medium">Import Successful</p>
-                      <p className="text-xs text-white/50">
+                      <p className="text-sm text-emerald-700 font-medium">Import successful</p>
+                      <p className="text-xs text-muted-foreground">
                         {importResult.vehicles > 0 && `${importResult.vehicles} vehicles imported. `}
                         {importResult.transactions > 0 && `${importResult.transactions} transactions imported.`}
                       </p>
@@ -283,11 +283,11 @@ export const CSVImport: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-4 bg-gold-500/10 border border-gold-500/30 rounded-lg">
-                      <AlertCircle className="w-5 h-5 text-gold-400 flex-shrink-0" />
+                    <div className="flex items-center gap-3 p-4 bg-amber-100 border border-amber-200 rounded-md">
+                      <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
                       <div>
-                        <p className="text-sm text-gold-400 font-medium">Import Completed with Errors</p>
-                        <p className="text-xs text-white/50">
+                        <p className="text-sm text-amber-700 font-medium">Import completed with errors</p>
+                        <p className="text-xs text-muted-foreground">
                           {importResult.vehicles > 0 && `${importResult.vehicles} vehicles imported. `}
                           {importResult.transactions > 0 && `${importResult.transactions} transactions imported.`}
                         </p>
@@ -296,7 +296,7 @@ export const CSVImport: React.FC = () => {
 
                     <div className="max-h-48 overflow-y-auto space-y-1">
                       {importResult.errors.map((error, i) => (
-                        <div key={i} className="text-xs text-red-400 p-2 bg-red-500/5 rounded">
+                        <div key={i} className="text-xs text-red-600 p-2 bg-red-50 rounded">
                           {error}
                         </div>
                       ))}
@@ -306,13 +306,13 @@ export const CSVImport: React.FC = () => {
 
                 <button
                   onClick={() => { setShowModal(false); setImportResult(null) }}
-                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white/60 hover:bg-white/10 transition-colors"
+                  className="w-full px-4 py-2 border rounded-md text-muted-foreground hover:bg-muted transition-colors"
                 >
                   Close
                 </button>
               </div>
             )}
-          </GlassCard>
+          </SimpleCard>
         </div>
       )}
     </>

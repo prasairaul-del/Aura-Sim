@@ -66,7 +66,7 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 z-40"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -80,19 +80,19 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
             role="dialog"
             aria-label="Vehicle acquisition catalog"
           >
-            <div className="glass-card w-full max-w-4xl max-h-[80vh] overflow-hidden border border-white/10">
+            <div className="bg-card border w-full max-w-4xl max-h-[80vh] overflow-hidden rounded-lg">
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="flex items-center justify-between p-6 border-b">
                 <div>
-                  <h2 className="text-xl font-bold text-white">Acquire New Asset</h2>
-                  <p className="text-sm text-white/50 mt-1">Available Balance: {formatCurrency(totalBalance)}</p>
+                  <h2 className="text-xl font-bold">Acquire new asset</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Available balance: {formatCurrency(totalBalance)}</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                  className="p-2 hover:bg-muted rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                   aria-label="Close catalog"
                 >
-                  <X className="w-5 h-5 text-white/60" />
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
@@ -105,27 +105,27 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
                       onClick={() => setSelectedVehicle(vehicle)}
                       disabled={!canAfford(vehicle)}
                       className={cn(
-                        "text-left p-4 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50",
+                        "text-left p-4 rounded-md border transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50",
                         selectedVehicle?.model === vehicle.model
-                          ? "bg-emerald-500/20 border-emerald-500/50"
-                          : "bg-white/5 border-white/10 hover:bg-white/10",
+                          ? "bg-emerald-100 border-emerald-500"
+                          : "border hover:bg-muted",
                         !canAfford(vehicle) && "opacity-40 cursor-not-allowed"
                       )}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="font-bold text-white">{vehicle.model}</h3>
-                          <p className="text-xs text-white/50 capitalize">{vehicle.class}</p>
+                          <h3 className="font-bold">{vehicle.model}</h3>
+                          <p className="text-xs text-muted-foreground capitalize">{vehicle.class}</p>
                         </div>
                         <span className={cn(
                           "font-mono text-sm font-bold",
-                          canAfford(vehicle) ? "text-emerald-400" : "text-red-400"
+                          canAfford(vehicle) ? "text-emerald-600" : "text-red-600"
                         )}>
                           {formatCurrency(vehicle.price)}
                         </span>
                       </div>
-                      <p className="text-xs text-white/40 mb-3">{vehicle.description}</p>
-                      <div className="flex gap-3 text-[10px] text-white/50">
+                      <p className="text-xs text-muted-foreground mb-3">{vehicle.description}</p>
+                      <div className="flex gap-3 text-[10px] text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Shield className="w-3 h-3" /> Health: {vehicle.baseHealth}%
                         </span>
@@ -140,26 +140,26 @@ export const VehicleCatalog: React.FC<{ isOpen: boolean; onClose: () => void }> 
 
               {/* Footer / Purchase Button */}
               {selectedVehicle && (
-                <div className="p-6 border-t border-white/10 bg-white/5">
+                <div className="p-6 border-t bg-muted/50">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-white/60">Selected:</p>
-                      <p className="font-bold text-white">{selectedVehicle.model}</p>
-                      <p className="font-mono text-emerald-400">{formatCurrency(selectedVehicle.price)}</p>
+                      <p className="text-sm text-muted-foreground">Selected:</p>
+                      <p className="font-bold">{selectedVehicle.model}</p>
+                      <p className="font-mono text-emerald-600">{formatCurrency(selectedVehicle.price)}</p>
                     </div>
                     <div className="flex gap-3">
                       <button
                         onClick={() => setSelectedVehicle(null)}
-                        className="px-4 py-2 text-sm text-white/60 hover:text-white transition-colors focus:outline-none"
+                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handlePurchase}
                         disabled={!canAfford(selectedVehicle)}
-                        className="px-6 py-2 bg-emerald-500 text-onyx-950 rounded-lg font-bold text-sm hover:bg-emerald-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                        className="px-6 py-2 bg-emerald-500 text-white rounded-md font-bold text-sm hover:bg-emerald-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                       >
-                        Confirm Purchase
+                        Confirm purchase
                       </button>
                     </div>
                   </div>

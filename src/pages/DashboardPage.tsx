@@ -9,15 +9,14 @@ export function DashboardPage() {
   const { totalBalance, fleetHealth, operationalEfficiency } = useSimulationStore()
 
   return (
-    <div className="space-y-12">
-      {/* Currency Selector */}
+    <div className="space-y-6">
       <div className="flex justify-end">
         <div className="flex items-center gap-2">
-          <Globe className="w-3 h-3" style={{ color: 'var(--app-text-faint)' }} />
+          <Globe className="w-3.5 h-3.5" style={{ color: 'var(--app-text-faint)' }} />
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value as typeof currency)}
-            className="border rounded-lg px-3 py-1.5 text-xs appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            className="border px-3 py-1.5 text-xs appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
             style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)' }}
             aria-label="Select display currency"
           >
@@ -28,27 +27,25 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
       <KPICards currency={currency} />
 
-      {/* Welcome Section */}
-      <div className="glass-card p-8" style={{ borderColor: 'var(--app-border-light)' }}>
-        <h2 className="text-2xl font-bold mb-4">Welcome to Aura-Sim</h2>
-        <p className="mb-6" style={{ color: 'var(--app-text-muted)' }}>
-          Your comprehensive business management simulator. Navigate through the sections above to manage your fleet, track finances, analyze performance, and more.
+      <div className="border p-6" style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg)' }}>
+        <h2 className="text-base font-semibold mb-3">Overview</h2>
+        <p className="text-sm mb-5" style={{ color: 'var(--app-text-muted)' }}>
+          Manage your fleet, track finances, and analyze performance.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-          <div className="p-4" style={{ backgroundColor: 'var(--app-card-bg)' }}>
-            <p className="text-gold-500 font-bold mb-2">Total Liquidity</p>
-            <p style={{ color: 'var(--app-text-muted)' }}>{formatCurrencyFromUSD(totalBalance, currency)}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="p-3 border" style={{ borderColor: 'var(--app-card-border)' }}>
+            <p className="text-gold-500 font-medium mb-1">Total Liquidity</p>
+            <p className="font-mono" style={{ color: 'var(--app-text-muted)' }}>{formatCurrencyFromUSD(totalBalance, currency)}</p>
           </div>
-          <div className="p-4" style={{ backgroundColor: 'var(--app-card-bg)' }}>
-            <p className="text-emerald-500 font-bold mb-2">Fleet Viability</p>
-            <p style={{ color: 'var(--app-text-muted)' }}>{fleetHealth}%</p>
+          <div className="p-3 border" style={{ borderColor: 'var(--app-card-border)' }}>
+            <p className="text-emerald-500 font-medium mb-1">Fleet Viability</p>
+            <p className="font-mono" style={{ color: 'var(--app-text-muted)' }}>{fleetHealth}%</p>
           </div>
-          <div className="p-4" style={{ backgroundColor: 'var(--app-card-bg)' }}>
-            <p className="text-emerald-400 font-bold mb-2">Op. Efficiency</p>
-            <p style={{ color: 'var(--app-text-muted)' }}>{operationalEfficiency}%</p>
+          <div className="p-3 border" style={{ borderColor: 'var(--app-card-border)' }}>
+            <p className="text-emerald-400 font-medium mb-1">Op. Efficiency</p>
+            <p className="font-mono" style={{ color: 'var(--app-text-muted)' }}>{operationalEfficiency}%</p>
           </div>
         </div>
       </div>

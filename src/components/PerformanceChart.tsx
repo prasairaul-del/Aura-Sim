@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { GlassCard } from './ui/GlassComponents'
+import { SimpleCard } from './ui/GlassComponents'
 import { useSimulationStore } from '../store/useSimulationStore'
 
 interface ChartDataPoint {
@@ -46,10 +46,10 @@ export const PerformanceChart: React.FC = () => {
   }, [transactions, totalBalance])
 
   return (
-    <GlassCard className="h-[300px] p-0 overflow-hidden">
+    <SimpleCard className="h-[300px] p-0 overflow-hidden">
       <div className="p-6 pb-0">
-        <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-1">Yield Velocity</h4>
-        <p className="text-[10px] text-white/40 uppercase tracking-widest">24-Hour Performance Cycle</p>
+        <h4 className="text-xs font-semibold mb-1">Yield velocity</h4>
+        <p className="text-[10px] text-muted-foreground">24-hour performance cycle</p>
       </div>
       
       <div className="h-[220px] w-full mt-4">
@@ -61,24 +61,24 @@ export const PerformanceChart: React.FC = () => {
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
             <XAxis 
               dataKey="name" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+              tick={{ fill: '#9ca3af', fontSize: 10 }}
               dy={10}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+              tick={{ fill: '#9ca3af', fontSize: 10 }}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#0a0a0a', 
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
+                backgroundColor: '#fff', 
+                border: '1px solid #e5e7eb',
+                borderRadius: '6px',
                 fontSize: '12px'
               }}
               itemStyle={{ color: '#10b981' }}
@@ -95,6 +95,6 @@ export const PerformanceChart: React.FC = () => {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </GlassCard>
+    </SimpleCard>
   )
 }

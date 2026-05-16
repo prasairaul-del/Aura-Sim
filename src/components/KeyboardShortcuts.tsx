@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { GlassCard } from './ui/GlassComponents'
+import { SimpleCard } from './ui/GlassComponents'
 import { Keyboard, X } from 'lucide-react'
 
 interface Shortcut {
@@ -149,30 +149,30 @@ export const KeyboardShortcuts: React.FC = () => {
       {/* Keyboard shortcut indicator */}
       <button
         onClick={() => setShowHelp(true)}
-        className="fixed bottom-4 right-4 p-3 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors z-40"
+        className="fixed bottom-4 right-4 p-3 border rounded-md hover:bg-muted transition-colors z-40"
         aria-label="Show keyboard shortcuts"
         title="Keyboard shortcuts (?)"
       >
-        <Keyboard className="w-5 h-5 text-white/60" />
+        <Keyboard className="w-5 h-5 text-muted-foreground" />
       </button>
 
       {/* Help Modal */}
       {showHelp && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
           role="dialog"
           aria-modal="true"
           onClick={(e) => { if (e.target === e.currentTarget) setShowHelp(false) }}
         >
-          <GlassCard glowColor="emerald" className="w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+          <SimpleCard className="w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-xl font-bold tracking-tight">Keyboard Shortcuts</h3>
-                <p className="text-white/60 text-sm">Power user shortcuts for quick navigation</p>
+                <h3 className="text-xl font-bold tracking-tight">Keyboard shortcuts</h3>
+                <p className="text-muted-foreground text-sm">Power user shortcuts for quick navigation</p>
               </div>
               <button
                 onClick={() => setShowHelp(false)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-muted rounded-md transition-colors"
                 aria-label="Close keyboard shortcuts"
               >
                 <X className="w-5 h-5" />
@@ -182,14 +182,14 @@ export const KeyboardShortcuts: React.FC = () => {
             <div className="space-y-6">
               {/* Simulation Controls */}
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-emerald-400 mb-3">Simulation Controls</h4>
+                <h4 className="text-xs font-semibold text-emerald-600 mb-3">Simulation controls</h4>
                 <div className="space-y-2">
                   {shortcuts.filter(s => s.keys.length === 1 && ['Space'].includes(s.keys[0])).map((shortcut, i) => (
-                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-white/5 rounded-lg">
-                      <span className="text-sm text-white/70">{shortcut.description}</span>
+                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md">
+                      <span className="text-sm text-muted-foreground">{shortcut.description}</span>
                       <div className="flex gap-1">
                         {shortcut.keys.map(key => (
-                          <kbd key={key} className="px-2 py-1 bg-white/10 border border-white/20 rounded text-xs font-mono text-white/80">
+                          <kbd key={key} className="px-2 py-1 bg-muted border rounded text-xs font-mono">
                             {key === ' ' ? 'Space' : key}
                           </kbd>
                         ))}
@@ -201,14 +201,14 @@ export const KeyboardShortcuts: React.FC = () => {
 
               {/* Navigation */}
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-gold-400 mb-3">Navigation (Go to...)</h4>
+                <h4 className="text-xs font-semibold text-amber-600 mb-3">Navigation (Go to...)</h4>
                 <div className="space-y-2">
                   {shortcuts.filter(s => s.keys.length === 2).map((shortcut, i) => (
-                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-white/5 rounded-lg">
-                      <span className="text-sm text-white/70">{shortcut.description}</span>
+                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md">
+                      <span className="text-sm text-muted-foreground">{shortcut.description}</span>
                       <div className="flex gap-1">
                         {shortcut.keys.map(key => (
-                          <kbd key={key} className="px-2 py-1 bg-white/10 border border-white/20 rounded text-xs font-mono text-white/80">
+                          <kbd key={key} className="px-2 py-1 bg-muted border rounded text-xs font-mono">
                             {key.toUpperCase()}
                           </kbd>
                         ))}
@@ -220,14 +220,14 @@ export const KeyboardShortcuts: React.FC = () => {
 
               {/* General */}
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-white/50 mb-3">General</h4>
+                <h4 className="text-xs font-semibold text-muted-foreground mb-3">General</h4>
                 <div className="space-y-2">
                   {shortcuts.filter(s => ['?', 'Escape', 'r'].includes(s.keys[0])).map((shortcut, i) => (
-                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-white/5 rounded-lg">
-                      <span className="text-sm text-white/70">{shortcut.description}</span>
+                    <div key={i} className="flex justify-between items-center py-2 px-3 bg-muted/50 rounded-md">
+                      <span className="text-sm text-muted-foreground">{shortcut.description}</span>
                       <div className="flex gap-1">
                         {shortcut.keys.map(key => (
-                          <kbd key={key} className="px-2 py-1 bg-white/10 border border-white/20 rounded text-xs font-mono text-white/80">
+                          <kbd key={key} className="px-2 py-1 bg-muted border rounded text-xs font-mono">
                             {key === ' ' ? 'Space' : key === '?' ? '?' : key.toUpperCase()}
                           </kbd>
                         ))}
@@ -238,12 +238,12 @@ export const KeyboardShortcuts: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/10">
-              <p className="text-xs text-white/40 text-center">
-                Press <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-white/60">?</kbd> to toggle this help
+            <div className="mt-6 pt-4 border-t">
+              <p className="text-xs text-muted-foreground text-center">
+                Press <kbd className="px-1.5 py-0.5 bg-muted rounded">?</kbd> to toggle this help
               </p>
             </div>
-          </GlassCard>
+          </SimpleCard>
         </div>
       )}
     </>

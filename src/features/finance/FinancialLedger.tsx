@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSimulationStore } from '../../store/useSimulationStore'
-import { GlassCard } from '../../components/ui/GlassComponents'
+import { SimpleCard } from '../../components/ui/GlassComponents'
 import { OCRDropzone } from './OCRDropzone'
 import { formatCurrency, cn } from '../../lib/utils'
 import { ArrowUpRight, ArrowDownRight, ReceiptText, Plus, Search, Download, Edit, Trash2 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 
 const CATEGORIES = ["Fleet", "Operations", "Marketing", "Staff", "VIP Services"] as const
@@ -36,7 +36,7 @@ export const FinancialLedger: React.FC = () => {
   const saveEdit = (id: string) => {
     const amount = parseFloat(editForm.amount)
     if (isNaN(amount)) return
-    
+
     editTransaction(id, {
       merchant: editForm.merchant,
       amount: editForm.type === 'income' ? amount : -amount,
@@ -46,7 +46,7 @@ export const FinancialLedger: React.FC = () => {
   }
 
   const handleDelete = (id: string) => {
-    if (confirm('Delete this transaction? This will reverse its effect on your balance.')) {
+    if (confirm('Delete this transaction?')) {
       deleteTransaction(id)
     }
   }
@@ -102,7 +102,6 @@ export const FinancialLedger: React.FC = () => {
     URL.revokeObjectURL(url)
   }
 
-  // Filtered and searched transactions
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
       const matchesSearch = searchQuery === '' ||
@@ -114,17 +113,20 @@ export const FinancialLedger: React.FC = () => {
     })
   }, [transactions, searchQuery, typeFilter, categoryFilter])
 
+  const inputClass = "w-full px-3 py-2 text-sm border focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h3 className="text-2xl font-bold tracking-tight">Ledger Theater</h3>
-          <p className="text-white/60 text-sm">Every transaction is a narrative of luxury</p>
+          <h3 className="text-base font-semibold">Financial Ledger</h3>
+          <p style={{ color: 'var(--app-text-muted)' }} className="text-sm mt-1">Track transactions and manage finances</p>
         </div>
         <button
           onClick={exportCSV}
           disabled={transactions.length === 0}
-          className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+          className="flex items-center gap-2 px-3 py-1.5 border text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+          style={{ backgroundColor: 'var(--app-card-bg)', borderColor: 'var(--app-card-border)', borderRadius: '6px', color: 'var(--app-text-muted)' }}
           aria-label="Export transactions to CSV"
         >
           <Download className="w-3 h-3" />
@@ -136,100 +138,107 @@ export const FinancialLedger: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Entry Form */}
-        <GlassCard className="lg:col-span-1 h-fit" glowColor="gold">
-          <div className="flex items-center gap-2 mb-6">
+        <SimpleCard className="lg:col-span-1">
+          <div className="flex items-center gap-2 mb-4">
             <Plus className="w-4 h-4 text-gold-500" />
-            <h4 className="text-xs font-bold uppercase tracking-widest text-gold-500">New Entry</h4>
+            <h4 className="text-sm font-medium">New Entry</h4>
           </div>
-          <form onSubmit={handleManualEntry} className="space-y-4">
+          <form onSubmit={handleManualEntry} className="space-y-3">
             <div>
-              <label htmlFor="merchant-input" className="text-[10px] uppercase text-white/60 mb-1 block">Merchant / Source</label>
-              <input id="merchant-input" name="merchant" required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition-colors" placeholder="e.g. Jet A1 Fueling" />
+              <label htmlFor="merchant-input" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Merchant / Source</label>
+              <input id="merchant-input" name="merchant" required
+                className={`${inputClass} bg-white/5`}
+                style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
+                placeholder="e.g. Jet A1 Fueling" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="amount-input" className="text-[10px] uppercase text-white/60 mb-1 block">Amount</label>
-                <input id="amount-input" name="amount" type="number" step="0.01" required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50" placeholder="0.00" />
+                <label htmlFor="amount-input" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Amount</label>
+                <input id="amount-input" name="amount" type="number" step="0.01" required
+                  className={`${inputClass} bg-white/5`}
+                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
+                  placeholder="0.00" />
               </div>
               <div>
-                <label htmlFor="type-select" className="text-[10px] uppercase text-white/60 mb-1 block">Type</label>
-                <select id="type-select" name="type" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 appearance-none">
-                  <option value="expense" className="bg-onyx-900">Expense</option>
-                  <option value="income" className="bg-onyx-900">Income</option>
+                <label htmlFor="type-select" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Type</label>
+                <select id="type-select" name="type"
+                  className={`${inputClass} bg-white/5`}
+                  style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}>
+                  <option value="expense" style={{ backgroundColor: 'var(--app-option-bg)' }}>Expense</option>
+                  <option value="income" style={{ backgroundColor: 'var(--app-option-bg)' }}>Income</option>
                 </select>
               </div>
             </div>
             <div>
-              <label htmlFor="category-select" className="text-[10px] uppercase text-white/60 mb-1 block">Category</label>
-              <select id="category-select" name="category" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 appearance-none">
-                {CATEGORIES.map(c => <option key={c} value={c} className="bg-onyx-900">{c}</option>)}
+              <label htmlFor="category-select" className="text-xs block mb-1" style={{ color: 'var(--app-text-muted)' }}>Category</label>
+              <select id="category-select" name="category"
+                className={`${inputClass} bg-white/5`}
+                style={{ borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}>
+                {CATEGORIES.map(c => <option key={c} value={c} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c}</option>)}
               </select>
             </div>
-            <button type="submit" className="w-full py-3 bg-gold-500 text-onyx-950 rounded-xl font-bold text-xs uppercase tracking-widest hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-all focus:outline-none focus:ring-2 focus:ring-gold-500/50">
-              Commit to Ledger
+            <button type="submit" className="w-full py-2.5 bg-emerald-500 text-onyx-950 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50" style={{ borderRadius: '6px' }}>
+              Add Entry
             </button>
           </form>
-        </GlassCard>
+        </SimpleCard>
 
         {/* Transaction List */}
-        <GlassCard className="lg:col-span-2 min-h-[400px]">
-          <div className="flex items-center justify-between mb-6">
+        <SimpleCard className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <ReceiptText className="w-4 h-4 text-emerald-500" />
-              <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-500">Historical Narrative</h4>
+              <h4 className="text-sm font-medium">Transactions</h4>
             </div>
-            <span className="text-[10px] text-white/40 uppercase tracking-widest">{filteredTransactions.length} of {transactions.length}</span>
+            <span className="text-xs" style={{ color: 'var(--app-text-faint)' }}>{filteredTransactions.length} of {transactions.length}</span>
           </div>
 
-          {/* Filters */}
           <div className="flex flex-wrap gap-3 mb-4">
             <div className="flex-1 min-w-[180px] relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3" style={{ color: 'var(--app-text-faint)' }} />
               <input
                 type="text"
                 placeholder="Search merchants..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-xs text-white/70 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 placeholder:text-white/25"
-                aria-label="Search transactions by merchant or category"
+                className="w-full pl-9 pr-3 py-2 text-xs border focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
+                style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
+                aria-label="Search transactions"
               />
             </div>
-            <div className="flex gap-2">
-              {(['all', 'income', 'expense'] as FilterType[]).map(filter => (
-                <button
-                  key={filter}
-                  onClick={() => setTypeFilter(filter)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50",
-                    typeFilter === filter
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                      : "bg-white/5 text-white/40 border border-white/10 hover:bg-white/10"
-                  )}
-                  aria-pressed={typeFilter === filter}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
+            {(['all', 'income', 'expense'] as FilterType[]).map(filter => (
+              <button
+                key={filter}
+                onClick={() => setTypeFilter(filter)}
+                className={cn(
+                  "px-3 py-1.5 rounded text-xs font-medium border transition-colors focus:outline-none",
+                  typeFilter === filter
+                    ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/30"
+                    : "bg-transparent text-gray-500 border-gray-700 hover:bg-gray-800"
+                )}
+                aria-pressed={typeFilter === filter}
+              >
+                {filter}
+              </button>
+            ))}
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as Category | 'all')}
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] text-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none uppercase tracking-widest"
+              className="px-3 py-1.5 text-xs border focus:outline-none"
+              style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)', borderRadius: '6px' }}
               aria-label="Filter by category"
             >
-              <option value="all" className="bg-onyx-900">All Categories</option>
-              {CATEGORIES.map(c => <option key={c} value={c} className="bg-onyx-900">{c}</option>)}
+              <option value="all" style={{ backgroundColor: 'var(--app-option-bg)' }}>All</option>
+              {CATEGORIES.map(c => <option key={c} value={c} style={{ backgroundColor: 'var(--app-option-bg)' }}>{c}</option>)}
             </select>
           </div>
 
-          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2" role="list" aria-label="Transaction list">
+          <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2" role="list" aria-label="Transaction list">
             <AnimatePresence initial={false}>
               {filteredTransactions.length === 0 ? (
-                <div className="h-48 flex flex-col items-center justify-center border border-dashed border-white/5 rounded-2xl">
-                  <p className="text-white/30 text-xs uppercase tracking-[0.2em]">
-                    {transactions.length === 0
-                      ? 'The ledger is waiting for its first act...'
-                      : 'No transactions match your filters'}
+                <div className="h-48 flex flex-col items-center justify-center border border-dashed rounded-lg" style={{ borderColor: 'var(--app-card-border)' }}>
+                  <p className="text-xs" style={{ color: 'var(--app-text-faint)' }}>
+                    {transactions.length === 0 ? 'No transactions yet' : 'No matches found'}
                   </p>
                 </div>
               ) : (
@@ -237,22 +246,23 @@ export const FinancialLedger: React.FC = () => {
                   <motion.div
                     key={t.id}
                     role="listitem"
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
+                    exit={{ opacity: 0 }}
                     className={cn(
-                      "p-4 bg-white/5 rounded-xl border border-white/5 hover:border-white/10 transition-colors group",
-                      editingId === t.id && "border-emerald-500/30 bg-emerald-500/5"
+                      "p-3 border group transition-colors",
+                      editingId === t.id ? "border-emerald-500/30" : "hover:border-gray-600"
                     )}
+                    style={{ borderColor: 'var(--app-card-border)', backgroundColor: editingId === t.id ? 'var(--app-card-bg-hover)' : 'var(--app-card-bg)', borderRadius: '8px' }}
                   >
                     {editingId === t.id ? (
-                      // Edit mode
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         <input
                           type="text"
                           value={editForm.merchant}
                           onChange={(e) => setEditForm({ ...editForm, merchant: e.target.value })}
-                          className="w-full bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                          className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:border-emerald-500"
+                          style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)' }}
                           placeholder="Merchant"
                         />
                         <div className="flex gap-2">
@@ -261,72 +271,66 @@ export const FinancialLedger: React.FC = () => {
                             step="0.01"
                             value={editForm.amount}
                             onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
-                            className="flex-1 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                            className="flex-1 px-2 py-1 text-sm border rounded focus:outline-none focus:border-emerald-500"
+                            style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)' }}
                             placeholder="Amount"
                           />
                           <select
                             value={editForm.type}
                             onChange={(e) => setEditForm({ ...editForm, type: e.target.value as TransactionType })}
-                            className="bg-white/10 border border-white/20 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-emerald-500"
+                            className="px-2 py-1 text-sm border rounded focus:outline-none focus:border-emerald-500"
+                            style={{ backgroundColor: 'var(--app-input-bg)', borderColor: 'var(--app-input-border)', color: 'var(--app-input-text)' }}
                           >
-                            <option value="income" className="bg-onyx-900">Income</option>
-                            <option value="expense" className="bg-onyx-900">Expense</option>
+                            <option value="income" style={{ backgroundColor: 'var(--app-option-bg)' }}>Income</option>
+                            <option value="expense" style={{ backgroundColor: 'var(--app-option-bg)' }}>Expense</option>
                           </select>
                         </div>
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => saveEdit(t.id)}
-                            className="px-3 py-1 bg-emerald-500 text-onyx-950 rounded text-xs font-bold hover:bg-emerald-400 focus:outline-none"
-                          >
+                          <button onClick={() => saveEdit(t.id)} className="px-3 py-1 bg-emerald-500 text-onyx-950 text-xs font-medium rounded hover:bg-emerald-400 focus:outline-none">
                             Save
                           </button>
-                          <button
-                            onClick={() => setEditingId(null)}
-                            className="px-3 py-1 bg-white/10 text-white/60 rounded text-xs hover:bg-white/20 focus:outline-none"
-                          >
+                          <button onClick={() => setEditingId(null)} className="px-3 py-1 text-xs border rounded focus:outline-none" style={{ borderColor: 'var(--app-card-border)', backgroundColor: 'var(--app-card-bg-hover)', color: 'var(--app-text-muted)' }}>
                             Cancel
                           </button>
                         </div>
                       </div>
                     ) : (
-                      // View mode
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                           <div className={cn(
-                            "p-2 rounded-lg",
+                            "p-2 rounded",
                             t.type === 'income' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
                           )} aria-label={t.type === 'income' ? 'Income' : 'Expense'}>
                             {t.type === 'income' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-white/80">{t.merchant}</p>
-                            <p className="text-[10px] text-white/50 uppercase tracking-widest">{t.category} &bull; {new Date(t.date).toLocaleTimeString()}</p>
+                            <p className="text-sm font-medium">{t.merchant}</p>
+                            <p className="text-xs" style={{ color: 'var(--app-text-faint)' }}>{t.category} &bull; {new Date(t.date).toLocaleTimeString()}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
                             <p className={cn(
-                              "font-mono text-sm font-bold",
-                              t.type === 'income' ? "text-emerald-400" : "text-red-400"
+                              "font-mono text-sm font-medium",
+                              t.type === 'income' ? "text-emerald-500" : "text-red-500"
                             )} aria-label={`${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}`}>
                               {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                             </p>
-                            <p className="text-[8px] text-white/25 uppercase tracking-tighter">Verified</p>
                           </div>
                           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => startEdit(t)}
-                              className="p-1.5 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                              className="p-1.5 hover:bg-gray-700 rounded transition-colors focus:outline-none"
                               aria-label={`Edit transaction for ${t.merchant}`}
                             >
-                              <Edit className="w-3 h-3 text-white/40 hover:text-white/70" />
+                              <Edit className="w-3 h-3" style={{ color: 'var(--app-text-muted)' }} />
                             </button>
                             <button
                               onClick={() => handleDelete(t.id)}
-                              className="p-1.5 hover:bg-red-500/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                              className="p-1.5 hover:bg-red-500/10 rounded transition-colors focus:outline-none"
                               aria-label={`Delete transaction for ${t.merchant}`}
                             >
-                              <Trash2 className="w-3 h-3 text-white/40 hover:text-red-400" />
+                              <Trash2 className="w-3 h-3" style={{ color: 'var(--app-text-muted)' }} />
                             </button>
                           </div>
                         </div>
@@ -337,7 +341,7 @@ export const FinancialLedger: React.FC = () => {
               )}
             </AnimatePresence>
           </div>
-        </GlassCard>
+        </SimpleCard>
       </div>
     </div>
   )

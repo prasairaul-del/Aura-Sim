@@ -1,6 +1,7 @@
+import { cn } from '../lib/utils'
 import { TrendingUp, ShieldCheck, Zap } from 'lucide-react'
 import { useSimulationStore } from '../store/useSimulationStore'
-import { cn, formatCurrencyFromUSD } from '../lib/utils'
+import { formatCurrencyFromUSD } from '../lib/utils'
 
 interface KPICardsProps {
   currency: 'USD' | 'EUR' | 'GBP' | 'JPY' | 'AED'
@@ -16,16 +17,14 @@ export function KPICards({ currency }: KPICardsProps) {
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {kpis.map((kpi, i) => (
-        <div key={i} className="glass-card p-6 flex items-center gap-6" style={{ borderColor: 'var(--app-border-light)' }}>
-          <div className="p-4 rounded-2xl" style={{ backgroundColor: 'var(--app-card-bg)' }}>
-            <kpi.icon className={cn("w-6 h-6", kpi.color)} />
+        <div key={i} className="p-4 border" style={{ backgroundColor: 'var(--app-card-bg)', borderColor: 'var(--app-card-border)', borderRadius: '8px' }}>
+          <div className="flex items-center gap-3 mb-1">
+            <kpi.icon className={cn("w-4 h-4", kpi.color)} />
+            <p className="text-xs" style={{ color: 'var(--app-text-muted)' }}>{kpi.label}</p>
           </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] mb-1" style={{ color: 'var(--app-text-muted)' }}>{kpi.label}</p>
-            <p className="text-2xl font-bold font-mono tracking-tighter">{kpi.value}</p>
-          </div>
+          <p className="text-lg font-semibold font-mono tracking-tight">{kpi.value}</p>
         </div>
       ))}
     </div>
